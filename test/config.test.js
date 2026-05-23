@@ -63,7 +63,7 @@ describe("config loading", () => {
   });
 
   it("should load YAML config from clifingerprint.yaml", () => {
-    const cfg = loadConfig("../clifingerprint.yaml");
+    const cfg = loadConfig("./clifingerprint.yaml");
     assert.strictEqual(cfg.tool, "bash fixtures/stable-cli.js");
     assert.strictEqual(cfg.probes.length >= 2, true);
   });
