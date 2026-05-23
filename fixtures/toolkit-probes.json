@@ -1,0 +1,11 @@
+{
+  "tool": "bash fixtures/toolkit.sh",
+  "probes": [
+    {"name": "version", "tool": "bash", "args": ["fixtures/toolkit.sh", "--version"]},
+    {"name": "help", "tool": "bash", "args": ["fixtures/toolkit.sh", "--help"]},
+    {"name": "init subcommand", "tool": "bash", "args": ["fixtures/toolkit.sh", "init"]},
+    {"name": "build subcommand", "tool": "bash", "args": ["fixtures/toolkit.sh", "build"]},
+    {"name": "serve subcommand", "tool": "bash", "args": ["fixtures/toolkit.sh", "serve"]},
+    {"name": "unknown subcommand", "tool": "bash", "args": ["fixtures/toolkit.sh", "deploy"], "expectedExitCode": 2}
+  ]
+}
