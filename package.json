@@ -18,6 +18,7 @@
     "build": "tsc",
     "test": "node --test",
     "check": "tsc --noEmit",
+    "smoke": "bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
     "release:check": "npm run build && npm test && npm run package:smoke",
     "prepublishOnly": "npm run build"
