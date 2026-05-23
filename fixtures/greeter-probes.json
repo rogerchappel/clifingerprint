@@ -1,0 +1,45 @@
+{
+  "tool": "bash fixtures/greeter.sh",
+  "probes": [
+    {
+      "name": "version",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "--version"]
+    },
+    {
+      "name": "help",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "--help"]
+    },
+    {
+      "name": "default greeting",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh"]
+    },
+    {
+      "name": "named greeting",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "World"]
+    },
+    {
+      "name": "loud greeting",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "--loud", "World"]
+    },
+    {
+      "name": "language spanish",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "--lang", "es", "Mundo"]
+    },
+    {
+      "name": "language french",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "--lang", "fr", "Monde"]
+    },
+    {
+      "name": "unknown language",
+      "tool": "bash",
+      "args": ["fixtures/greeter.sh", "--lang", "xx", "Test"]
+    }
+  ]
+}
