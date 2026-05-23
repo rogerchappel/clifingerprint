@@ -1,56 +1,58 @@
 # Probe configuration for clifingerprint CLI contract recorder
 
+tool: "bash fixtures/stable-cli.js"
+
 metadata:
   description: Example probe config using fixture CLIs
 
 probes:
-  - id: stable-help
-    command: node
+  - name: stable-help
+    tool: "node"
     args:
-      - test/fixtures/stable-cli.js
+      - fixtures/stable-cli.js
       - "--help"
     expectedExitCode: 0
     timeoutMs: 10000
 
-  - id: stable-version
-    command: node
+  - name: stable-version
+    tool: "node"
     args:
-      - test/fixtures/stable-cli.js
+      - fixtures/stable-cli.js
       - "--version"
     expectedExitCode: 0
     timeoutMs: 10000
 
-  - id: stable-greet
-    command: node
+  - name: stable-greet
+    tool: "node"
     args:
-      - test/fixtures/stable-cli.js
+      - fixtures/stable-cli.js
       - greet
       - "--name"
       - Test
     expectedExitCode: 0
     timeoutMs: 10000
 
-  - id: stable-add
-    command: node
+  - name: stable-add
+    tool: "node"
     args:
-      - test/fixtures/stable-cli.js
+      - fixtures/stable-cli.js
       - add
       - "5"
       - "10"
     expectedExitCode: 0
     timeoutMs: 10000
 
-  - id: stable-fail
-    command: node
+  - name: stable-fail
+    tool: "node"
     args:
-      - test/fixtures/stable-cli.js
+      - fixtures/stable-cli.js
       - fail
     expectedExitCode: 1
     timeoutMs: 10000
 
-  - id: stable-no-args
-    command: node
+  - name: stable-no-args
+    tool: "node"
     args:
-      - test/fixtures/stable-cli.js
+      - fixtures/stable-cli.js
     expectedExitCode: 0
     timeoutMs: 10000

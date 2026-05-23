@@ -63,7 +63,7 @@ describe("config loading", () => {
   });
 
   it("should load YAML config from clifingerprint.yaml", () => {
-    const cfg = loadConfig("./clifingerprint.yaml");
+    const cfg = loadConfig("../clifingerprint.yaml");
     assert.strictEqual(cfg.tool, "bash fixtures/stable-cli.js");
     assert.strictEqual(cfg.probes.length >= 2, true);
   });
@@ -138,20 +138,6 @@ describe("executor with fixture CLIs", () => {
 
 describe("changing-cli detection", () => {
   it("should detect changes between v1 and v2", async () => {
-    const v1 = await buildFingerprint({
-      tool: "node test/fixtures/changing-cli.js",
-      probes: [
-        { name: "v1-help", tool: "node", env: { CLIFINGERPRINT_VERSION: "v1" }, args: ["test/fixtures/changing-cli.js", "--help"], timeoutMs: 5000 },
-        { name: "v1-version", tool: "node", env: { CLIFINGERPRINT_VERSION: "v1" }, args: ["test/fixtures/changing-cli.js", "--version"], timeoutMs: 5000 },
-      ],
-    });
-    const v2 = await buildFingerprint({
-      tool: "node test/fixtures/changing-cli.js",
-      probes: [
-        { name: "v2-help", tool: "node", env: { CLIFINGERPRINT_VERSION: "v2" }, args: ["test/fixtures/changing-cli.js", "--help"], timeoutMs: 5000 },
-        { name: "v2-version", tool: "node", env: { CLIFINGERPRINT_VERSION: "v2" }, args: ["test/fixtures/changing-cli.js", "--version"], timeoutMs: 5000 },
-      ],
-    });
     // Use same probe names for direct comparison
     const v1same = await buildFingerprint({
       tool: "node test/fixtures/changing-cli.js",

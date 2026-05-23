@@ -1,16 +1,17 @@
 #!/usr/bin/env node
 
 import { Command } from "commander";
-import { readFileSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { loadConfig } from "./fingerprint/config.js";
 import { buildFingerprint } from "./fingerprint/builder.js";
 import { compareFingerprints } from "./fingerprint/comparer.js";
-import { formatDiffReport, loadFingerprint, saveFingerprint } from "./fingerprint/serializer.js";
+import { formatDiffReport, saveFingerprint, loadFingerprint } from "./fingerprint/serializer.js";
 
 const program = new Command();
 
-const pkg = JSON.parse(readFileSync(resolve(new URL(".", import.meta.url).pathname, "../package.json"), "utf-8"));
+const pkgFile = resolve(new URL(".", import.meta.url).pathname, "../package.json");
+const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"));
 
 program
   .name("clifingerprint")
@@ -18,7 +19,6 @@ program
   .version(pkg.version)
   .helpOption("-h, --help", "Show help");
 
-// ── record ──
 program
   .command("record <config>")
   .description("Run probes from config and save a fingerprint")
@@ -32,7 +32,6 @@ program
     console.log(`Fingerprint saved to ${out} (${fp.probes.length} probes)`);
   });
 
-// ── compare ──
 program
   .command("compare <baseline> <config>")
   .description("Compare a fresh run against a saved baseline")
@@ -46,7 +45,6 @@ program
     if (!result.matched) process.exit(1);
   });
 
-// ── show ──
 program
   .command("show <fingerprint>")
   .description("Display a saved fingerprint summary")

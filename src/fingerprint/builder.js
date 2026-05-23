@@ -1,8 +1,6 @@
-import { loadConfig, validateConfig } from "./config.js";
 import { runProbe } from "./executor.js";
 
-export { loadConfig } from "./config.js";
-export { validateConfig } from "./config.js";
+export { loadConfig, validateConfig } from "./config.js";
 
 export async function buildFingerprint(config, toolDir) {
   const results = [];

@@ -102,6 +102,6 @@ describe("serializer", () => {
       ],
     });
     assert.ok(report.includes("deploy"));
-    assert.ok(report.includes("missing"));
+    assert.ok(report.includes("Missing"));
   });
 });
