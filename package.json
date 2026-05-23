@@ -8,19 +8,22 @@
     ".": "./src/index.js"
   },
   "bin": {
-    "clifingerprint": "./src/cli.js"
+    "cli-fp": "./src/cli.js"
   },
   "files": [
     "src",
     "README.md"
   ],
   "scripts": {
+    "build": "tsc",
     "test": "node --test",
     "lint": "eslint src/ test/ --ext .js",
     "format": "prettier --write src/ test/",
     "check": "npm run lint && npx prettier --check 'src/**/*.js' 'test/**/*.js'",
+    "smoke": "bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run package:smoke"
+    "release:check": "npm test && npm run package:smoke",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "cli",
