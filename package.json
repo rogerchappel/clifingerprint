@@ -20,6 +20,7 @@
     "check": "tsc --noEmit",
     "package:smoke": "npm pack --dry-run",
     "release:check": "npm run build && npm test && npm run package:smoke",
+    "release:dry-run": "npm run build && npm test && npm pack --dry-run",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -41,6 +42,9 @@
     "url": "https://github.com/rogerchappel/clifingerprint/issues"
   },
   "homepage": "https://github.com/rogerchappel/clifingerprint#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.14.0",
