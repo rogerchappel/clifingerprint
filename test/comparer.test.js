@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { buildFingerprint } from "../dist/fingerprint/builder.js";
-import { compareFingerprints } from "../dist/fingerprint/comparer.js";
+import { buildFingerprint } from "../src/fingerprint/builder.js";
+import { compareFingerprints } from "../src/fingerprint/comparer.js";
 
 describe("comparer", () => {
   const makeFP = async (probes) => {
@@ -14,7 +14,6 @@ describe("comparer", () => {
   it("should return matched when fingerprints are identical", async () => {
     const cfg = { tool: "echo", probes: [{ name: "hi", tool: "echo", args: ["hi"] }] };
     const fp1 = await makeFP(cfg.probes);
-    // Re-run to match
     const fp2 = await makeFP(cfg.probes);
     const result = compareFingerprints(fp1, fp2);
     assert.strictEqual(result.matched, true);
