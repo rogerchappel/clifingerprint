@@ -1,0 +1,54 @@
+{
+  "projectName": "clifingerprint",
+  "classification": "mvp",
+  "status": "complete",
+  "components": [
+    {
+      "name": "config",
+      "file": "src/fingerprint/config.js",
+      "purpose": "Load and validate YAML/JSON probe configs"
+    },
+    {
+      "name": "executor",
+      "file": "src/fingerprint/executor.js",
+      "purpose": "Spawn processes, capture stdout/stderr/exit codes with timeout"
+    },
+    {
+      "name": "builder",
+      "file": "src/fingerprint/builder.js",
+      "purpose": "Run all probes from config and assemble a fingerprint"
+    },
+    {
+      "name": "comparer",
+      "file": "src/fingerprint/comparer.js",
+      "purpose": "Diff two fingerprints to detect changes"
+    },
+    {
+      "name": "serializer",
+      "file": "src/fingerprint/serializer.js",
+      "purpose": "JSON I/O for fingerprint files, report formatting"
+    },
+    {
+      "name": "cli",
+      "file": "src/cli.js",
+      "purpose": "CLI entry point with record, compare, show commands"
+    }
+  ],
+  "fixtures": [
+    {
+      "name": "stable-cli",
+      "file": "test/fixtures/stable-cli.js",
+      "purpose": "Deterministic fixture CLI for baseline consistency tests"
+    },
+    {
+      "name": "changing-cli",
+      "file": "test/fixtures/changing-cli.js",
+      "purpose": "Variable fixture CLI (CLIFINGERPRINT_VERSION env) for change detection tests"
+    }
+  ],
+  "qualityGates": {
+    "tests": "39 passing across 8 suites",
+    "lint": "eslint flat config with prettier",
+    "validate": "scripts/validate.sh checks required files, dirs, and package scripts"
+  }
+}

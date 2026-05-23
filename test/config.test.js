@@ -13,17 +13,11 @@ describe("config validation", () => {
   });
 
   it("should reject missing tool", () => {
-    assert.throws(
-      () => validateConfig({ probes: [] }),
-      /tool/,
-    );
+    assert.throws(() => validateConfig({ probes: [] }), /tool/);
   });
 
   it("should reject empty probes array", () => {
-    assert.throws(
-      () => validateConfig({ tool: "echo", probes: [] }),
-      /non-empty array/,
-    );
+    assert.throws(() => validateConfig({ tool: "echo", probes: [] }), /non-empty array/);
   });
 
   it("should reject probe without name", () => {
@@ -119,15 +113,35 @@ describe("executor with fixture CLIs", () => {
     const fp1 = await buildFingerprint({
       tool: "node test/fixtures/stable-cli.js",
       probes: [
-        { name: "help", tool: "node", args: ["test/fixtures/stable-cli.js", "--help"], timeoutMs: 5000 },
-        { name: "version", tool: "node", args: ["test/fixtures/stable-cli.js", "--version"], timeoutMs: 5000 },
+        {
+          name: "help",
+          tool: "node",
+          args: ["test/fixtures/stable-cli.js", "--help"],
+          timeoutMs: 5000,
+        },
+        {
+          name: "version",
+          tool: "node",
+          args: ["test/fixtures/stable-cli.js", "--version"],
+          timeoutMs: 5000,
+        },
       ],
     });
     const fp2 = await buildFingerprint({
       tool: "node test/fixtures/stable-cli.js",
       probes: [
-        { name: "help", tool: "node", args: ["test/fixtures/stable-cli.js", "--help"], timeoutMs: 5000 },
-        { name: "version", tool: "node", args: ["test/fixtures/stable-cli.js", "--version"], timeoutMs: 5000 },
+        {
+          name: "help",
+          tool: "node",
+          args: ["test/fixtures/stable-cli.js", "--help"],
+          timeoutMs: 5000,
+        },
+        {
+          name: "version",
+          tool: "node",
+          args: ["test/fixtures/stable-cli.js", "--version"],
+          timeoutMs: 5000,
+        },
       ],
     });
     const { compareFingerprints } = await import("../src/fingerprint/comparer.js");
@@ -142,13 +156,25 @@ describe("changing-cli detection", () => {
     const v1same = await buildFingerprint({
       tool: "node test/fixtures/changing-cli.js",
       probes: [
-        { name: "same", tool: "node", env: { CLIFINGERPRINT_VERSION: "v1" }, args: ["test/fixtures/changing-cli.js", "--help"], timeoutMs: 5000 },
+        {
+          name: "same",
+          tool: "node",
+          env: { CLIFINGERPRINT_VERSION: "v1" },
+          args: ["test/fixtures/changing-cli.js", "--help"],
+          timeoutMs: 5000,
+        },
       ],
     });
     const v2same = await buildFingerprint({
       tool: "node test/fixtures/changing-cli.js",
       probes: [
-        { name: "same", tool: "node", env: { CLIFINGERPRINT_VERSION: "v2" }, args: ["test/fixtures/changing-cli.js", "--help"], timeoutMs: 5000 },
+        {
+          name: "same",
+          tool: "node",
+          env: { CLIFINGERPRINT_VERSION: "v2" },
+          args: ["test/fixtures/changing-cli.js", "--help"],
+          timeoutMs: 5000,
+        },
       ],
     });
     const { compareFingerprints } = await import("../src/fingerprint/comparer.js");

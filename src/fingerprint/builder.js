@@ -5,10 +5,7 @@ export { loadConfig, validateConfig } from "./config.js";
 export async function buildFingerprint(config, toolDir) {
   const results = [];
   for (const probe of config.probes) {
-    const result = await runProbe(
-      { ...probe, tool: probe.tool ?? config.tool },
-      toolDir
-    );
+    const result = await runProbe({ ...probe, tool: probe.tool ?? config.tool }, toolDir);
     results.push(result);
   }
   return {

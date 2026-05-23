@@ -6,7 +6,7 @@ import {
   formatDiffReport,
   loadFingerprint,
   saveFingerprint,
-} from "../dist/fingerprint/serializer.js";
+} from "../src/fingerprint/serializer.js";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { unlinkSync, existsSync } from "node:fs";
@@ -42,9 +42,7 @@ describe("serializer", () => {
 
   it("should reject unsupported fingerprint version", () => {
     assert.throws(() => {
-      parseFingerprint(
-        JSON.stringify({ version: 99, tool: "x", timestamp: "x", probes: [] })
-      );
+      parseFingerprint(JSON.stringify({ version: 99, tool: "x", timestamp: "x", probes: [] }));
     }, /version/);
   });
 

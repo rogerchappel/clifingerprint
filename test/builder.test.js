@@ -1,14 +1,12 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { buildFingerprint } from "../dist/fingerprint/builder.js";
+import { buildFingerprint } from "../src/fingerprint/builder.js";
 
 describe("builder", () => {
   it("should build fingerprint from valid config", async () => {
     const config = {
       tool: "echo",
-      probes: [
-        { name: "hello", tool: "echo", args: ["hello"] }
-      ]
+      probes: [{ name: "hello", tool: "echo", args: ["hello"] }],
     };
     const fp = await buildFingerprint(config);
     assert.strictEqual(fp.version, 1);
@@ -21,9 +19,7 @@ describe("builder", () => {
   it("should include skipped probes in fingerprint", async () => {
     const config = {
       tool: "echo",
-      probes: [
-        { name: "skip me", tool: "echo", skip: true }
-      ]
+      probes: [{ name: "skip me", tool: "echo", skip: true }],
     };
     const fp = await buildFingerprint(config);
     assert.strictEqual(fp.probes.length, 1);
@@ -37,8 +33,8 @@ describe("builder", () => {
       probes: [
         { name: "one", tool: "echo", args: ["one"] },
         { name: "two", tool: "echo", args: ["two"] },
-        { name: "fail", tool: "false", args: [] }
-      ]
+        { name: "fail", tool: "false", args: [] },
+      ],
     };
     const fp = await buildFingerprint(config);
     assert.strictEqual(fp.probes.length, 3);

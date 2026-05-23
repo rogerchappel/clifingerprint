@@ -21,12 +21,8 @@ describe("comparer", () => {
   });
 
   it("should detect changed stdout", async () => {
-    const baseline = await makeFP([
-      { name: "cmd", tool: "bash", args: ["-c", "echo one"] },
-    ]);
-    const current = await makeFP([
-      { name: "cmd", tool: "bash", args: ["-c", "echo two"] },
-    ]);
+    const baseline = await makeFP([{ name: "cmd", tool: "bash", args: ["-c", "echo one"] }]);
+    const current = await makeFP([{ name: "cmd", tool: "bash", args: ["-c", "echo two"] }]);
     const result = compareFingerprints(baseline, current);
     assert.strictEqual(result.matched, false);
     assert.strictEqual(result.differences[0].probeName, "cmd");
@@ -39,9 +35,7 @@ describe("comparer", () => {
       { name: "one", tool: "echo", args: ["one"] },
       { name: "two", tool: "echo", args: ["two"] },
     ]);
-    const current = await makeFP([
-      { name: "one", tool: "echo", args: ["one"] },
-    ]);
+    const current = await makeFP([{ name: "one", tool: "echo", args: ["one"] }]);
     const result = compareFingerprints(baseline, current);
     assert.strictEqual(result.matched, false);
     const missing = result.differences.find((d) => d.kind === "missing");
@@ -50,9 +44,7 @@ describe("comparer", () => {
   });
 
   it("should detect new probe", async () => {
-    const baseline = await makeFP([
-      { name: "one", tool: "echo", args: ["one"] },
-    ]);
+    const baseline = await makeFP([{ name: "one", tool: "echo", args: ["one"] }]);
     const current = await makeFP([
       { name: "one", tool: "echo", args: ["one"] },
       { name: "two", tool: "echo", args: ["two"] },
@@ -65,12 +57,8 @@ describe("comparer", () => {
   });
 
   it("should detect exit code changes", async () => {
-    const baseline = await makeFP([
-      { name: "ok", tool: "true" },
-    ]);
-    const current = await makeFP([
-      { name: "ok", tool: "false" },
-    ]);
+    const baseline = await makeFP([{ name: "ok", tool: "true" }]);
+    const current = await makeFP([{ name: "ok", tool: "false" }]);
     const result = compareFingerprints(baseline, current);
     assert.strictEqual(result.matched, false);
     const diff = result.differences[0];

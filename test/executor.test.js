@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { runProbe } from "../dist/fingerprint/executor.js";
+import { runProbe } from "../src/fingerprint/executor.js";
 
 describe("executor", () => {
   it("should capture stdout of a simple command", async () => {

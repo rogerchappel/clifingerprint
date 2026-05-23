@@ -33,7 +33,11 @@ export function compareFingerprints(baseline, current) {
 
   for (const [name] of currentMap) {
     if (!baselineMap.has(name)) {
-      differences.push({ probeName: name, changes: ["Probe added in current fingerprint"], kind: "new" });
+      differences.push({
+        probeName: name,
+        changes: ["Probe added in current fingerprint"],
+        kind: "new",
+      });
     }
   }
 
