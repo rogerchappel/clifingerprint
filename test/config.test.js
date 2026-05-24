@@ -7,7 +7,7 @@ describe("config validation", () => {
   it("should accept a valid probe config", () => {
     const cfg = {
       tool: "echo",
-      probes: [{ name: "test", tool: "echo", args: ["hello"] }],
+      probes: [{ name: "test", args: ["hello"] }],
     };
     assert.doesNotThrow(() => validateConfig(cfg));
   });
@@ -58,8 +58,9 @@ describe("config loading", () => {
 
   it("should load YAML config from clifingerprint.yaml", () => {
     const cfg = loadConfig("./clifingerprint.yaml");
-    assert.strictEqual(cfg.tool, "bash fixtures/stable-cli.js");
-    assert.strictEqual(cfg.probes.length >= 2, true);
+    assert.strictEqual(cfg.tool, "bash fixtures/greeter.sh");
+    assert.strictEqual(cfg.packageFile, "package.json");
+    assert.strictEqual(cfg.probes.length >= 3, true);
   });
 });
 

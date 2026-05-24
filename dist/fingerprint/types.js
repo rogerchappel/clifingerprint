@@ -1,8 +1,4 @@
-/**
- * Core data types for CLI fingerprint recording.
- *
- * A "probe" describes a single command invocation and its expected contract.
- * A "fingerprint" is a collection of probe results, timestamped.
- */
-export {};
+/** @module clifingerprint/types */
+/** Schema version for fingerprint files */
+export const SCHEMA_VERSION = 1;
 //# sourceMappingURL=types.js.map

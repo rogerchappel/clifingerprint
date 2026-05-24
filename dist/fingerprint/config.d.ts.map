@@ -1,1 +1,1 @@
-{"version":3,"file":"config.d.ts","sourceRoot":"","sources":["../../src/fingerprint/config.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,eAAe,EAAkB,MAAM,cAAc,CAAC;AAE/D,wBAAgB,UAAU,CAAC,IAAI,EAAE,MAAM,GAAG,eAAe,CAKxD"}
+{"version":3,"file":"config.d.ts","sourceRoot":"","sources":["../../src/fingerprint/config.js"],"names":[],"mappings":"AAIA,2CAKC;AAED,kDA4DC"}

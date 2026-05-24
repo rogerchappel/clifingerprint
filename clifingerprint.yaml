@@ -1,23 +1,27 @@
 # Probe configuration for clifingerprint CLI contract recorder
 
-tool: "bash fixtures/stable-cli.js"
+tool: "bash fixtures/greeter.sh"
+packageFile: "package.json"
 
 metadata:
-  description: Example probe config using fixture CLIs
+  description: Example probe config using fixture CLI
 
 probes:
-  - name: stable-help
-    tool: "node"
+  - name: greeter-help
     args:
-      - fixtures/stable-cli.js
       - "--help"
     expectedExitCode: 0
     timeoutMs: 10000
 
-  - name: stable-version
-    tool: "node"
+  - name: greeter-version
     args:
-      - fixtures/stable-cli.js
       - "--version"
+    expectedExitCode: 0
+    timeoutMs: 10000
+
+  - name: greeter-loud
+    args:
+      - "--loud"
+      - "World"
     expectedExitCode: 0
     timeoutMs: 10000

@@ -1,2 +1,2 @@
-export type { ProbeConfig, ProbeResult, Fingerprint, CompareResult, ProbeDiff } from "./fingerprint/types.js";
+export * from "./index.js";
 //# sourceMappingURL=index.d.ts.map

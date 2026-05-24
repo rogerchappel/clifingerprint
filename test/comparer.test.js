@@ -30,6 +30,53 @@ describe("comparer", () => {
     assert.ok(result.differences[0].changes.includes("stdout changed"));
   });
 
+  it("should highlight option flag changes in help output", () => {
+    const baseline = {
+      version: 1,
+      tool: "test",
+      timestamp: "2000-01-01T00:00:00Z",
+      probes: [
+        {
+          name: "help",
+          command: "test --help",
+          stdout: "Options:\n  --help\n  --debug\n",
+          stderr: "",
+          exitCode: 0,
+          timedOut: false,
+          execError: null,
+          durationMs: 1,
+          skipped: false,
+        },
+      ],
+    };
+    const current = {
+      ...baseline,
+      probes: [{ ...baseline.probes[0], stdout: "Options:\n  --help\n  --color\n" }],
+    };
+    const result = compareFingerprints(baseline, current);
+    assert.strictEqual(result.matched, false);
+    assert.ok(result.differences[0].changes.includes("flag removed: --debug"));
+    assert.ok(result.differences[0].changes.includes("flag added: --color"));
+  });
+
+  it("should detect package metadata changes", () => {
+    const baseline = {
+      version: 1,
+      tool: "test",
+      package: { name: "tool", version: "1.0.0", bin: { tool: "cli.js" } },
+      timestamp: "2000-01-01T00:00:00Z",
+      probes: [],
+    };
+    const current = {
+      ...baseline,
+      package: { name: "tool", version: "2.0.0", bin: { tool: "cli.js" } },
+    };
+    const result = compareFingerprints(baseline, current);
+    assert.strictEqual(result.matched, false);
+    assert.strictEqual(result.differences[0].kind, "metadata");
+    assert.ok(result.differences[0].changes.some((change) => change.includes("version")));
+  });
+
   it("should detect missing probe", async () => {
     const baseline = await makeFP([
       { name: "one", tool: "echo", args: ["one"] },

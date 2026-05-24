@@ -14,7 +14,8 @@ const pkgFile = resolve(new URL(".", import.meta.url).pathname, "../package.json
 const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"));
 
 program
-  .name("clifingerprint")
+  .name("cli-fp")
+  .alias("clifingerprint")
   .description("Record CLI contracts and detect changes between builds")
   .version(pkg.version)
   .helpOption("-h, --help", "Show help");
