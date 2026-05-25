@@ -1,68 +1,57 @@
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+#!/usr/bin/env node
+import { Command } from "commander";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { loadConfig } from "./fingerprint/config.js";
 import { buildFingerprint } from "./fingerprint/builder.js";
 import { compareFingerprints } from "./fingerprint/comparer.js";
-import { formatDiffReport } from "./fingerprint/serializer.js";
-const yargsInstance = yargs(hideBin(process.argv));
-async function main() {
-    await yargsInstance
-        .command("record <config>", "Run probes from a config and save a fingerprint", (y) => y
-        .positional("config", {
-        describe: "Probe config file (JSON)",
-        type: "string",
-        demandOption: true,
-    })
-        .option("output", {
-        alias: "o",
-        describe: "Output fingerprint file",
-        type: "string",
-        default: "fingerprint.json",
-    })
-        .option("cwd", {
-        describe: "Working directory for probes",
-        type: "string",
-    }), async (args) => {
-        const configPath = args.config;
-        const cfg = loadConfig(configPath);
-        const fp = await buildFingerprint(cfg, args.cwd);
-        const path = (await import("node:path")).resolve(args.output);
-        const { writeFileSync } = await import("node:fs");
-        writeFileSync(path, JSON.stringify(fp, null, 2));
-        console.log(`Fingerprint saved to ${path} (${fp.probes.length} probes)`);
-    })
-        .command("compare <baseline> <config>", "Compare a fresh run against a saved baseline", (y) => y
-        .positional("baseline", {
-        describe: "Saved fingerprint file",
-        type: "string",
-        demandOption: true,
-    })
-        .positional("config", {
-        describe: "Probe config file (JSON)",
-        type: "string",
-        demandOption: true,
-    })
-        .option("cwd", {
-        describe: "Working directory for probes",
-        type: "string",
-    }), async (args) => {
-        const { readFileSync } = await import("node:fs");
-        const { resolve } = await import("node:path");
-        const baseline = JSON.parse(readFileSync(args.baseline, "utf-8"));
-        const cfg = loadConfig(resolve(args.config));
-        const current = await buildFingerprint(cfg, args.cwd);
-        const result = compareFingerprints(baseline, current);
-        console.log(formatDiffReport(result));
-        if (!result.matched)
-            process.exit(1);
-    })
-        .demandCommand(1, "You need to specify a command")
-        .strict()
-        .help()
-        .parse();
-}
-main().catch((err) => {
-    console.error(err.message);
-    process.exit(1);
+import { formatDiffReport, saveFingerprint, loadFingerprint } from "./fingerprint/serializer.js";
+const program = new Command();
+const pkgFile = resolve(new URL(".", import.meta.url).pathname, "../package.json");
+const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"));
+program
+    .name("cli-fp")
+    .alias("clifingerprint")
+    .description("Record CLI contracts and detect changes between builds")
+    .version(pkg.version)
+    .helpOption("-h, --help", "Show help");
+program
+    .command("record <config>")
+    .description("Run probes from config and save a fingerprint")
+    .option("-o, --output <path>", "Output fingerprint path", "fingerprint.json")
+    .option("--tool-dir <dir>", "Working directory for probes")
+    .action(async (configPath, opts) => {
+    const cfg = loadConfig(resolve(configPath));
+    const fp = await buildFingerprint(cfg, opts.toolDir);
+    const out = resolve(opts.output);
+    saveFingerprint(out, fp);
+    console.log(`Fingerprint saved to ${out} (${fp.probes.length} probes)`);
 });
+program
+    .command("compare <baseline> <config>")
+    .description("Compare a fresh run against a saved baseline")
+    .option("--tool-dir <dir>", "Working directory for probes")
+    .action(async (baselinePath, configPath, opts) => {
+    const baseline = loadFingerprint(resolve(baselinePath));
+    const cfg = loadConfig(resolve(configPath));
+    const current = await buildFingerprint(cfg, opts.toolDir);
+    const result = compareFingerprints(baseline, current);
+    console.log(formatDiffReport(result));
+    if (!result.matched)
+        process.exit(1);
+});
+program
+    .command("show <fingerprint>")
+    .description("Display a saved fingerprint summary")
+    .action((fpPath) => {
+    const fp = loadFingerprint(resolve(fpPath));
+    console.log(`Tool: ${fp.tool}`);
+    console.log(`Recorded: ${fp.timestamp}`);
+    console.log(`Probes: ${fp.probes.length}\n`);
+    for (const p of fp.probes) {
+        const icon = p.exitCode === 0 ? "✓" : "✗";
+        console.log(`  ${icon} ${p.name}  exit=${p.exitCode}  ${p.durationMs}ms`);
+    }
+});
+program.parse(process.argv);
 //# sourceMappingURL=cli.js.map

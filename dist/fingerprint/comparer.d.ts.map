@@ -1,1 +1,1 @@
-{"version":3,"file":"comparer.d.ts","sourceRoot":"","sources":["../../src/fingerprint/comparer.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,aAAa,EAAa,MAAM,YAAY,CAAC;AAEnE,wBAAgB,mBAAmB,CACjC,QAAQ,EAAE,WAAW,EACrB,OAAO,EAAE,WAAW,GACnB,aAAa,CAgEf"}
+{"version":3,"file":"comparer.d.ts","sourceRoot":"","sources":["../../src/fingerprint/comparer.js"],"names":[],"mappings":"AAAA,sDAAsD;AACtD;;;;;;;EAkEC"}

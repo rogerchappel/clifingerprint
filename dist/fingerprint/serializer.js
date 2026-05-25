@@ -17,11 +17,9 @@ export function saveFingerprint(path, fp) {
     writeFileSync(path, serializeFingerprint(fp), "utf-8");
 }
 export function formatDiffReport(result) {
-    if (result.matched) {
+    if (result.matched)
         return "✓ All probes match the baseline.";
-    }
-    const lines = [];
-    lines.push("✗ Fingerprint differences detected:\n");
+    const lines = ["✗ Fingerprint differences detected:\n"];
     for (const diff of result.differences) {
         const kind = diff.kind.charAt(0).toUpperCase() + diff.kind.slice(1);
         lines.push(`  [${kind}] ${diff.probeName}`);

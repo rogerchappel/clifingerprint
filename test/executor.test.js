@@ -83,4 +83,36 @@ describe("executor", () => {
     });
     assert.ok(result.stdout.includes("hello-env"));
   });
+
+  it("should support command strings and expected exit codes", async () => {
+    const result = await runProbe({
+      name: "command",
+      command: "bash -c",
+      args: ["exit 7"],
+      expectedExitCode: 7,
+    });
+    assert.strictEqual(result.command, 'bash -c "exit 7"');
+    assert.strictEqual(result.exitCode, 7);
+    assert.strictEqual(result.expectedExitMatched, true);
+  });
+
+  it("should limit inherited environment to allowlisted keys", async () => {
+    const previous = process.env.CLIFP_ALLOWLIST_TEST;
+    process.env.CLIFP_ALLOWLIST_TEST = "allowed";
+    try {
+      const result = await runProbe({
+        name: "allowlist",
+        tool: "bash",
+        args: ["-c", "echo ${CLIFP_ALLOWLIST_TEST:-missing}:${HOME:-missing}"],
+        envAllowlist: ["CLIFP_ALLOWLIST_TEST"],
+      });
+      assert.strictEqual(result.stdout.trim(), "allowed:missing");
+    } finally {
+      if (previous === undefined) {
+        delete process.env.CLIFP_ALLOWLIST_TEST;
+      } else {
+        process.env.CLIFP_ALLOWLIST_TEST = previous;
+      }
+    }
+  });
 });

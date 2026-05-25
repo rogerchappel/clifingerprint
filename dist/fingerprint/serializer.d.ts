@@ -1,7 +1,6 @@
-import { Fingerprint, CompareResult } from "./types.js";
-export declare function serializeFingerprint(fp: Fingerprint): string;
-export declare function parseFingerprint(data: string): Fingerprint;
-export declare function loadFingerprint(path: string): Fingerprint;
-export declare function saveFingerprint(path: string, fp: Fingerprint): void;
-export declare function formatDiffReport(result: CompareResult): string;
+export function serializeFingerprint(fp: any): string;
+export function parseFingerprint(data: any): any;
+export function loadFingerprint(path: any): any;
+export function saveFingerprint(path: any, fp: any): void;
+export function formatDiffReport(result: any): string;
 //# sourceMappingURL=serializer.d.ts.map

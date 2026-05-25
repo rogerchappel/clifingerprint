@@ -16,7 +16,7 @@ else
 fi
 
 # Test 2: Record command works with fixture
-if node src/cli.js record --config fixtures/greeter-probes.json --output /tmp/smoke-test-fp.json 2>&1 | grep -q "Fingerprint saved"; then
+if node src/cli.js record fixtures/greeter-probes.json --output /tmp/smoke-test-fp.json 2>&1 | grep -q "Fingerprint saved"; then
   echo "PASS: Record command works"
   rm -f /tmp/smoke-test-fp.json
 else
@@ -25,7 +25,7 @@ else
 fi
 
 # Test 3: Fingerprint file is valid JSON
-record_result=$(node src/cli.js record --config fixtures/greeter-probes.json --output /tmp/smoke-test-fp2.json 2>&1)
+record_result=$(node src/cli.js record fixtures/greeter-probes.json --output /tmp/smoke-test-fp2.json 2>&1)
 if echo "$record_result" | grep -q "Fingerprint saved" && [ -f /tmp/smoke-test-fp2.json ] && node -e "JSON.parse(require('fs').readFileSync('/tmp/smoke-test-fp2.json','utf8'))"; then
   echo "PASS: Fingerprint is valid JSON"
   rm -f /tmp/smoke-test-fp2.json
@@ -35,11 +35,11 @@ else
 fi
 
 # Test 4: Compare command works (compare fingerprint to itself)
-node src/cli.js record --config fixtures/greeter-probes.json --output /tmp/smoke-fp1.json
-node src/cli.js record --config fixtures/greeter-probes.json --output /tmp/smoke-fp2.json
-compare_result=$(node src/cli.js compare --baseline /tmp/smoke-fp1.json --current /tmp/smoke-fp2.json 2>&1)
+node src/cli.js record fixtures/greeter-probes.json --output /tmp/smoke-fp1.json
+node src/cli.js record fixtures/greeter-probes.json --output /tmp/smoke-fp2.json
+compare_result=$(node src/cli.js compare /tmp/smoke-fp1.json fixtures/greeter-probes.json 2>&1)
 if echo "$compare_result" | grep -q "match"; then
-  echo "PASS: Compare command works (identical fingerprints)"
+  echo "PASS: Compare command works (fresh run matches baseline)"
 else
   echo "FAIL: Compare command failed"
   exit 1
