@@ -74,6 +74,7 @@ npm test
 npm run lint
 npm run build
 npm run smoke
+npm run release:check
 bash scripts/validate.sh
 ```
 

@@ -22,7 +22,7 @@
     "check": "npm run lint && npx prettier --check 'src/**/*.js' 'test/**/*.js'",
     "smoke": "bash scripts/smoke.sh",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run package:smoke",
+    "release:check": "npm run check && npm run build && npm test && npm run smoke && npm run package:smoke",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
