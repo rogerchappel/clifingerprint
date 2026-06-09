@@ -8,11 +8,13 @@
     ".": "./src/index.js"
   },
   "bin": {
-    "cli-fp": "./src/cli.js"
+    "cli-fp": "src/cli.js"
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "SECURITY.md"
   ],
   "scripts": {
     "build": "tsc",
@@ -38,7 +40,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rogerchappel/clifingerprint"
+    "url": "git+https://github.com/rogerchappel/clifingerprint.git"
   },
   "bugs": {
     "url": "https://github.com/rogerchappel/clifingerprint/issues"
