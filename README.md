@@ -88,3 +88,16 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
 ## License
 
 MIT
+
+## Release verification
+
+Run the same checks locally before opening a release PR:
+
+```bash
+npm run check
+npm test
+npm run build
+npm run smoke
+npm run package:smoke
+npm run release:check
+```
