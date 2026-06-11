@@ -85,6 +85,20 @@ fixture CLIs.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
 
+## Development
+
+Use Node.js 20 or newer. Run the same checks locally before opening a PR:
+
+```sh
+npm run build
+npm run check
+npm run lint
+npm test
+npm run smoke
+npm run package:smoke
+npm run release:check
+```
+
 ## License
 
 MIT
