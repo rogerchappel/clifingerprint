@@ -21,7 +21,7 @@ node src/cli.js --help
 
 The package exposes the `cli-fp` binary when installed.
 
-## Record A Fingerprint
+## Quick Start: Record A Fingerprint
 
 ```sh
 node src/cli.js record clifingerprint.yaml --output fingerprint.json
@@ -80,6 +80,10 @@ bash scripts/validate.sh
 
 `scripts/smoke.sh` performs a real CLI record and compare flow against the
 fixture CLIs.
+
+`npm run package:smoke` verifies the packed artifact includes the CLI entry,
+README, license, changelog, security policy, contributing guide, and code of
+conduct before a release candidate is reviewed.
 
 ## Security
 

@@ -26,7 +26,7 @@
     "format": "prettier --write src/ test/",
     "check": "npm run lint && npx prettier --check 'src/**/*.js' 'test/**/*.js'",
     "smoke": "bash scripts/smoke.sh",
-    "package:smoke": "npm pack --dry-run",
+    "package:smoke": "node scripts/package-smoke.mjs",
     "release:check": "npm run check && npm run build && npm test && npm run smoke && npm run package:smoke",
     "prepublishOnly": "npm run build"
   },
