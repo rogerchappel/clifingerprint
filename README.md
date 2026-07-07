@@ -89,6 +89,16 @@ conduct before a release candidate is reviewed.
 
 See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
 
+## Limitations
+
+- `clifingerprint` records observable CLI behavior from configured probes; it
+  does not infer undocumented compatibility guarantees.
+- Probe output can include sensitive local paths or values if the configured
+  command prints them. Review baselines before committing or sharing them.
+- Comparisons are deterministic snapshots, not semantic reviews. A changed help
+  line, exit code, or metadata field should be reviewed by a maintainer before
+  being accepted as intentional.
+
 ## Development
 
 Use Node.js 20 or newer. Run the same checks locally before opening a PR:
