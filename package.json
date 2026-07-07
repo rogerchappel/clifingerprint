@@ -12,6 +12,10 @@
   },
   "files": [
     "src",
+    "fixtures",
+    "examples",
+    "docs/tutorials",
+    "clifingerprint.yaml",
     "README.md",
     "LICENSE",
     "SECURITY.md",

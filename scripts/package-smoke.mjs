@@ -18,6 +18,11 @@ const requiredFiles = new Set([
   "CHANGELOG.md",
   "CONTRIBUTING.md",
   "CODE_OF_CONDUCT.md",
+  "clifingerprint.yaml",
+  "fixtures/greeter.sh",
+  "fixtures/greeter-probes.json",
+  "examples/ci-release-check.sh",
+  "docs/tutorials/ci-release-check.md",
 ]);
 
 if (packageJson.main) {
