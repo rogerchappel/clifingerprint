@@ -103,10 +103,7 @@ describe("executor", () => {
       args: ["--loud", "Probe User"],
       expectedExitCode: 0,
     });
-    assert.strictEqual(
-      result.command,
-      'bash fixtures/greeter.sh --loud "Probe User"',
-    );
+    assert.strictEqual(result.command, 'bash fixtures/greeter.sh --loud "Probe User"');
     assert.match(result.stdout, /PROBE USER/);
     assert.strictEqual(result.exitCode, 0);
     assert.strictEqual(result.expectedExitMatched, true);

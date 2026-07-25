@@ -40,7 +40,9 @@ program
       return [];
     });
     if (failures.length > 0) {
-      console.error(`Fingerprint not saved:\n${failures.map((failure) => `- ${failure}`).join("\n")}`);
+      console.error(
+        `Fingerprint not saved:\n${failures.map((failure) => `- ${failure}`).join("\n")}`,
+      );
       process.exitCode = 1;
       return;
     }

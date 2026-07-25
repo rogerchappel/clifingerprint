@@ -79,9 +79,7 @@ function recordConfig(config) {
   const outputPath = join(dir, "fingerprint.json");
   writeFileSync(configPath, JSON.stringify(config));
 
-  return spawnSync(
-    process.execPath,
-    ["src/cli.js", "record", configPath, "--output", outputPath],
-    { encoding: "utf8" },
-  );
+  return spawnSync(process.execPath, ["src/cli.js", "record", configPath, "--output", outputPath], {
+    encoding: "utf8",
+  });
 }
