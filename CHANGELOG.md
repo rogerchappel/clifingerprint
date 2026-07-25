@@ -11,6 +11,11 @@ format and uses semantic versioning when versioned releases are published.
 
 - Initial project setup.
 
+### Fixed
+
+- Execute arguments embedded in `tool` before per-probe arguments, and reject
+  recordings whose probes fail to execute or miss their expected exit code.
+
 ## Release Links
 
 - Unreleased:

@@ -120,14 +120,10 @@ export function normalizeProbe(probe) {
   }
 
   const parts = splitCommand(probe.tool);
-  if ((probe.args ?? []).length > 0 || parts.length === 1) {
-    return { ...probe, tool: probe.tool, args: probe.args ?? [] };
-  }
-
   return {
     ...probe,
     tool: parts[0],
-    args: parts.slice(1),
+    args: [...parts.slice(1), ...(probe.args ?? [])],
   };
 }
 

@@ -28,6 +28,24 @@ program
   .action(async (configPath, opts) => {
     const cfg = loadConfig(resolve(configPath));
     const fp = await buildFingerprint(cfg, opts.toolDir);
+    const failures = fp.probes.flatMap((probe) => {
+      if (probe.execError) {
+        return [`${probe.name}: execution failed: ${probe.execError}`];
+      }
+      if (probe.expectedExitMatched === false) {
+        return [
+          `${probe.name}: expected exit ${probe.expectedExitCode}, received ${probe.exitCode}`,
+        ];
+      }
+      return [];
+    });
+    if (failures.length > 0) {
+      console.error(
+        `Fingerprint not saved:\n${failures.map((failure) => `- ${failure}`).join("\n")}`,
+      );
+      process.exitCode = 1;
+      return;
+    }
     const out = resolve(opts.output);
     saveFingerprint(out, fp);
     console.log(`Fingerprint saved to ${out} (${fp.probes.length} probes)`);

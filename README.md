@@ -28,6 +28,8 @@ node src/cli.js record clifingerprint.yaml --output fingerprint.json
 ```
 
 `record` executes every probe in the config and writes a JSON fingerprint.
+It exits with code `1` without saving when a command cannot be executed or a
+probe does not match its `expectedExitCode`.
 
 ## Compare Against A Baseline
 

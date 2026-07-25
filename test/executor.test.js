@@ -96,6 +96,20 @@ describe("executor", () => {
     assert.strictEqual(result.expectedExitMatched, true);
   });
 
+  it("should prepend a multi-word tool's arguments to probe arguments", async () => {
+    const result = await runProbe({
+      name: "multi-word tool",
+      tool: "bash fixtures/greeter.sh",
+      args: ["--loud", "Probe User"],
+      expectedExitCode: 0,
+    });
+    assert.strictEqual(result.command, 'bash fixtures/greeter.sh --loud "Probe User"');
+    assert.match(result.stdout, /PROBE USER/);
+    assert.strictEqual(result.exitCode, 0);
+    assert.strictEqual(result.expectedExitMatched, true);
+    assert.strictEqual(result.execError, null);
+  });
+
   it("should limit inherited environment to allowlisted keys", async () => {
     const previous = process.env.CLIFP_ALLOWLIST_TEST;
     process.env.CLIFP_ALLOWLIST_TEST = "allowed";
