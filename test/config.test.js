@@ -41,6 +41,82 @@ describe("config validation", () => {
     };
     assert.doesNotThrow(() => validateConfig(cfg));
   });
+
+  it("should accept typed global defaults and probe overrides", () => {
+    assert.doesNotThrow(() =>
+      validateConfig({
+        tool: "node",
+        args: ["global.js"],
+        cwd: "/tmp",
+        stdin: "global input",
+        skip: false,
+        probes: [
+          {
+            name: "override",
+            args: ["probe.js"],
+            cwd: "/var/tmp",
+            stdin: "probe input",
+            skip: true,
+          },
+        ],
+      }),
+    );
+  });
+
+  for (const { label, config, probe, message } of [
+    {
+      label: "non-string global args elements",
+      config: { args: [42] },
+      message: /config\.args must be an array of strings/,
+    },
+    {
+      label: "non-string global cwd",
+      config: { cwd: 42 },
+      message: /config\.cwd must be a string/,
+    },
+    {
+      label: "non-string global stdin",
+      config: { stdin: 42 },
+      message: /config\.stdin must be a string/,
+    },
+    {
+      label: "non-boolean global skip",
+      config: { skip: "yes" },
+      message: /config\.skip must be a boolean/,
+    },
+    {
+      label: "non-string probe args elements",
+      probe: { args: [42] },
+      message: /Probe 'test' args must be an array of strings/,
+    },
+    {
+      label: "non-string probe cwd",
+      probe: { cwd: 42 },
+      message: /Probe 'test' cwd must be a string/,
+    },
+    {
+      label: "non-string probe stdin",
+      probe: { stdin: 42 },
+      message: /Probe 'test' stdin must be a string/,
+    },
+    {
+      label: "non-boolean probe skip",
+      probe: { skip: "yes" },
+      message: /Probe 'test' skip must be a boolean/,
+    },
+  ]) {
+    it(`should reject ${label}`, () => {
+      assert.throws(
+        () =>
+          validateConfig({
+            tool: "node",
+            probes: [{ name: "test", ...(probe ?? {}) }],
+            ...(config ?? {}),
+          }),
+        message,
+      );
+    });
+  }
 });
 
 describe("config loading", () => {
