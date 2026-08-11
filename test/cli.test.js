@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import { execSync, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -71,6 +71,29 @@ describe("clifingerprint CLI", () => {
     assert.match(result.stderr, /unexpected exit: expected exit 0, received 1/);
     assert.doesNotMatch(result.stdout, /Fingerprint saved/);
   });
+
+  it("should save record when a probe with an expected exit is skipped", () => {
+    const result = recordConfig({
+      tool: "node",
+      probes: [{ name: "optional probe", skip: true, expectedExitCode: 0 }],
+    });
+
+    assert.strictEqual(result.status, 0);
+    assert.match(result.stdout, /Fingerprint saved/);
+    assert.strictEqual(result.outputExists, true);
+  });
+
+  it("should fail record without saving when a probe times out", () => {
+    const result = recordConfig({
+      tool: process.execPath,
+      probes: [{ name: "slow probe", args: ["-e", "setInterval(() => {}, 1000)"], timeoutMs: 25 }],
+    });
+
+    assert.strictEqual(result.status, 1);
+    assert.match(result.stderr, /slow probe: timed out/);
+    assert.doesNotMatch(result.stdout, /Fingerprint saved/);
+    assert.strictEqual(result.outputExists, false);
+  });
 });
 
 function recordConfig(config) {
@@ -79,7 +102,12 @@ function recordConfig(config) {
   const outputPath = join(dir, "fingerprint.json");
   writeFileSync(configPath, JSON.stringify(config));
 
-  return spawnSync(process.execPath, ["src/cli.js", "record", configPath, "--output", outputPath], {
-    encoding: "utf8",
-  });
+  const result = spawnSync(
+    process.execPath,
+    ["src/cli.js", "record", configPath, "--output", outputPath],
+    {
+      encoding: "utf8",
+    },
+  );
+  return { ...result, outputExists: existsSync(outputPath) };
 }
