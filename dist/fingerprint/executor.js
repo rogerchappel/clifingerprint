@@ -16,7 +16,7 @@ export async function runProbe(probe, toolDir) {
             stderr: "",
             exitCode: null,
             expectedExitCode: probe.expectedExitCode ?? null,
-            expectedExitMatched: probe.expectedExitCode === undefined ? null : false,
+            expectedExitMatched: null,
             timedOut: false,
             execError: null,
             durationMs: 0,

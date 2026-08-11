@@ -62,6 +62,20 @@ describe("executor", () => {
       timeoutMs: 100,
     });
     assert.strictEqual(result.timedOut, true);
+    assert.strictEqual(result.exitCode, null);
+    assert.strictEqual(result.expectedExitMatched, null);
+  });
+
+  it("should not evaluate expected exit codes for skipped probes", async () => {
+    const result = await runProbe({
+      name: "skipped",
+      tool: "echo",
+      skip: true,
+      expectedExitCode: 0,
+    });
+    assert.strictEqual(result.skipped, true);
+    assert.strictEqual(result.expectedExitCode, 0);
+    assert.strictEqual(result.expectedExitMatched, null);
   });
 
   it("should respect cwd", async () => {
