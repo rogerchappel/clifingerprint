@@ -14,11 +14,17 @@ export function validateConfig(config) {
     if (!config.tool || typeof config.tool !== "string") {
         throw new Error("config.tool must be a non-empty string");
     }
-    if (config.args !== undefined && !Array.isArray(config.args)) {
-        throw new Error("config.args must be an array when provided");
+    if (config.args !== undefined && !isStringArray(config.args)) {
+        throw new Error("config.args must be an array of strings when provided");
     }
     if (config.cwd !== undefined && typeof config.cwd !== "string") {
         throw new Error("config.cwd must be a string when provided");
+    }
+    if (config.stdin !== undefined && typeof config.stdin !== "string") {
+        throw new Error("config.stdin must be a string when provided");
+    }
+    if (config.skip !== undefined && typeof config.skip !== "boolean") {
+        throw new Error("config.skip must be a boolean when provided");
     }
     if (config.env !== undefined && !isStringRecord(config.env)) {
         throw new Error("config.env must be an object of string values when provided");
@@ -46,8 +52,17 @@ export function validateConfig(config) {
         if (probe.command !== undefined && typeof probe.command !== "string") {
             throw new Error(`Probe '${probe.name}' command must be a string`);
         }
-        if (probe.args !== undefined && !Array.isArray(probe.args)) {
-            throw new Error(`Probe '${probe.name}' args must be an array`);
+        if (probe.args !== undefined && !isStringArray(probe.args)) {
+            throw new Error(`Probe '${probe.name}' args must be an array of strings`);
+        }
+        if (probe.cwd !== undefined && typeof probe.cwd !== "string") {
+            throw new Error(`Probe '${probe.name}' cwd must be a string`);
+        }
+        if (probe.stdin !== undefined && typeof probe.stdin !== "string") {
+            throw new Error(`Probe '${probe.name}' stdin must be a string`);
+        }
+        if (probe.skip !== undefined && typeof probe.skip !== "boolean") {
+            throw new Error(`Probe '${probe.name}' skip must be a boolean`);
         }
         if (probe.env !== undefined && !isStringRecord(probe.env)) {
             throw new Error(`Probe '${probe.name}' env must be an object of string values`);

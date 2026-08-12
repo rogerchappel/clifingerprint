@@ -68,8 +68,10 @@ probes:
     expectedExitCode: 2
 ```
 
-Each probe can override `tool`, `command`, `args`, `cwd`, `env`,
-`envAllowlist`, `expectedExitCode`, `timeoutMs`, `stdin`, and `skip`.
+Global defaults and individual probes accept `args` as an array of strings,
+`cwd` and `stdin` as strings, and `skip` as a boolean. Each probe can override
+those defaults as well as `tool`, `command`, `env`, `envAllowlist`,
+`expectedExitCode`, and `timeoutMs`.
 Set `skip: true` to retain a probe in the contract without executing it;
 `expectedExitMatched` is `null` for that probe even when `expectedExitCode` is
 configured. A probe that exceeds `timeoutMs` is never saved as a baseline by

@@ -13,6 +13,8 @@ export async function buildFingerprint(config, toolDir) {
         tool: probe.tool ?? config.tool,
         args: probe.args ?? config.args,
         cwd: probe.cwd ?? config.cwd,
+        stdin: probe.stdin ?? config.stdin,
+        skip: probe.skip ?? config.skip,
         envAllowlist: probe.envAllowlist ?? config.envAllowlist,
         env: { ...(config.env ?? {}), ...(probe.env ?? {}) },
       },
