@@ -32,6 +32,9 @@ program
       if (probe.execError) {
         return [`${probe.name}: execution failed: ${probe.execError}`];
       }
+      if (probe.timedOut) {
+        return [`${probe.name}: timed out`];
+      }
       if (probe.expectedExitMatched === false) {
         return [
           `${probe.name}: expected exit ${probe.expectedExitCode}, received ${probe.exitCode}`,

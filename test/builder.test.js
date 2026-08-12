@@ -35,11 +35,22 @@ describe("builder", () => {
   it("should include skipped probes in fingerprint", async () => {
     const config = {
       tool: "echo",
-      probes: [{ name: "skip me", tool: "echo", skip: true }],
+      probes: [{ name: "skip me", tool: "echo", skip: true, expectedExitCode: 0 }],
     };
     const fp = await buildFingerprint(config);
     assert.strictEqual(fp.probes.length, 1);
     assert.strictEqual(fp.probes[0].skipped, true);
+    assert.strictEqual(fp.probes[0].exitCode, null);
+    assert.strictEqual(fp.probes[0].expectedExitCode, 0);
+    assert.strictEqual(fp.probes[0].expectedExitMatched, null);
+  });
+
+  it("should preserve timed-out probe status", async () => {
+    const fp = await buildFingerprint({
+      tool: process.execPath,
+      probes: [{ name: "timeout", args: ["-e", "setInterval(() => {}, 1000)"], timeoutMs: 25 }],
+    });
+    assert.strictEqual(fp.probes[0].timedOut, true);
     assert.strictEqual(fp.probes[0].exitCode, null);
   });
 

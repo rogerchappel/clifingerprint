@@ -27,9 +27,11 @@ The package exposes the `cli-fp` binary when installed.
 node src/cli.js record clifingerprint.yaml --output fingerprint.json
 ```
 
-`record` executes every probe in the config and writes a JSON fingerprint.
-It exits with code `1` without saving when a command cannot be executed or a
-probe does not match its `expectedExitCode`.
+`record` executes every non-skipped probe in the config and writes a JSON
+fingerprint. Intentionally skipped probes remain in the fingerprint, and their
+expected exit code is not evaluated. It exits with code `1` without saving when
+a command cannot be executed, a probe times out, or a completed probe does not
+match its `expectedExitCode`.
 
 ## Compare Against A Baseline
 
@@ -70,6 +72,10 @@ Global defaults and individual probes accept `args` as an array of strings,
 `cwd` and `stdin` as strings, and `skip` as a boolean. Each probe can override
 those defaults as well as `tool`, `command`, `env`, `envAllowlist`,
 `expectedExitCode`, and `timeoutMs`.
+Set `skip: true` to retain a probe in the contract without executing it;
+`expectedExitMatched` is `null` for that probe even when `expectedExitCode` is
+configured. A probe that exceeds `timeoutMs` is never saved as a baseline by
+the `record` command.
 
 ## Verify
 
