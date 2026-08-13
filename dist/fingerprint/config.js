@@ -11,7 +11,7 @@ export function validateConfig(config) {
     if (!config || typeof config !== "object") {
         throw new Error("config must be an object");
     }
-    if (!config.tool || typeof config.tool !== "string") {
+    if (!isNonBlankString(config.tool)) {
         throw new Error("config.tool must be a non-empty string");
     }
     if (config.args !== undefined && !isStringArray(config.args)) {
@@ -42,15 +42,20 @@ export function validateConfig(config) {
     if (!Array.isArray(config.probes) || config.probes.length === 0) {
         throw new Error("config.probes must be a non-empty array");
     }
+    const probeNames = new Set();
     for (const probe of config.probes) {
-        if (!probe.name || typeof probe.name !== "string") {
-            throw new Error("Each probe must have a name");
+        if (!isNonBlankString(probe.name)) {
+            throw new Error("Each probe must have a non-empty name");
         }
-        if (probe.tool !== undefined && typeof probe.tool !== "string") {
-            throw new Error(`Probe '${probe.name}' tool must be a string`);
+        if (probeNames.has(probe.name)) {
+            throw new Error(`Probe names must be unique: '${probe.name}'`);
         }
-        if (probe.command !== undefined && typeof probe.command !== "string") {
-            throw new Error(`Probe '${probe.name}' command must be a string`);
+        probeNames.add(probe.name);
+        if (probe.tool !== undefined && !isNonBlankString(probe.tool)) {
+            throw new Error(`Probe '${probe.name}' tool must be a non-empty string`);
+        }
+        if (probe.command !== undefined && !isNonBlankString(probe.command)) {
+            throw new Error(`Probe '${probe.name}' command must be a non-empty string`);
         }
         if (probe.args !== undefined && !isStringArray(probe.args)) {
             throw new Error(`Probe '${probe.name}' args must be an array of strings`);
@@ -78,6 +83,9 @@ export function validateConfig(config) {
             throw new Error(`Probe '${probe.name}' timeoutMs must be a positive integer`);
         }
     }
+}
+function isNonBlankString(value) {
+    return typeof value === "string" && value.trim().length > 0;
 }
 function isStringArray(value) {
     return Array.isArray(value) && value.every((item) => typeof item === "string");
