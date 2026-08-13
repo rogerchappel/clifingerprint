@@ -30,6 +30,26 @@ describe("comparer", () => {
     assert.ok(result.differences[0].changes.includes("stdout changed"));
   });
 
+  it("should reject duplicate probe names instead of discarding an earlier change", () => {
+    const baseline = {
+      probes: [
+        { name: "duplicate", stdout: "first-v1" },
+        { name: "duplicate", stdout: "stable-last" },
+      ],
+    };
+    const current = {
+      probes: [
+        { name: "duplicate", stdout: "first-v2" },
+        { name: "duplicate", stdout: "stable-last" },
+      ],
+    };
+
+    assert.throws(
+      () => compareFingerprints(baseline, current),
+      /Baseline fingerprint contains duplicate probe name 'duplicate'/,
+    );
+  });
+
   it("should highlight option flag changes in help output", () => {
     const baseline = {
       version: 1,
