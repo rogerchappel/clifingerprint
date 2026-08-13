@@ -72,6 +72,9 @@ Global defaults and individual probes accept `args` as an array of strings,
 `cwd` and `stdin` as strings, and `skip` as a boolean. Each probe can override
 those defaults as well as `tool`, `command`, `env`, `envAllowlist`,
 `expectedExitCode`, and `timeoutMs`.
+The global `tool` and every probe `name` must be nonblank. Probe names must also
+be unique because they identify probes during comparison. When supplied, a
+probe-level `tool` or `command` must be nonblank too.
 Set `skip: true` to retain a probe in the contract without executing it;
 `expectedExitMatched` is `null` for that probe even when `expectedExitCode` is
 configured. A probe that exceeds `timeoutMs` is never saved as a baseline by

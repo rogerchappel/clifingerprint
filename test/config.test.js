@@ -31,6 +31,38 @@ describe("config validation", () => {
     );
   });
 
+  for (const { label, config, message } of [
+    {
+      label: "blank global tool",
+      config: { tool: "   ", probes: [{ name: "test" }] },
+      message: /config\.tool must be a non-empty string/,
+    },
+    {
+      label: "blank probe name",
+      config: { tool: "echo", probes: [{ name: "\t" }] },
+      message: /Each probe must have a non-empty name/,
+    },
+    {
+      label: "blank probe tool",
+      config: { tool: "echo", probes: [{ name: "test", tool: "  " }] },
+      message: /Probe 'test' tool must be a non-empty string/,
+    },
+    {
+      label: "blank probe command",
+      config: { tool: "echo", probes: [{ name: "test", command: "\n" }] },
+      message: /Probe 'test' command must be a non-empty string/,
+    },
+    {
+      label: "duplicate probe names",
+      config: { tool: "echo", probes: [{ name: "same" }, { name: "same" }] },
+      message: /Probe names must be unique: 'same'/,
+    },
+  ]) {
+    it(`should reject ${label}`, () => {
+      assert.throws(() => validateConfig(config), message);
+    });
+  }
+
   it("should accept probe with skip flag", () => {
     const cfg = {
       tool: "echo",

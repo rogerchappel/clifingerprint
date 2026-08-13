@@ -1,5 +1,7 @@
 /** Compare two fingerprints and return differences */
 export function compareFingerprints(baseline, current) {
+    assertUniqueProbeNames(baseline.probes, "Baseline fingerprint");
+    assertUniqueProbeNames(current.probes, "Current fingerprint");
     const differences = [];
     const packageChanges = comparePackageMetadata(baseline.package, current.package);
     if (packageChanges.length > 0) {
@@ -57,6 +59,15 @@ export function compareFingerprints(baseline, current) {
         }
     }
     return { matched: differences.length === 0, differences };
+}
+function assertUniqueProbeNames(probes, label) {
+    const names = new Set();
+    for (const probe of probes) {
+        if (names.has(probe.name)) {
+            throw new Error(`${label} contains duplicate probe name '${probe.name}'`);
+        }
+        names.add(probe.name);
+    }
 }
 function compareFlags(baselineText, currentText) {
     const baselineFlags = extractFlags(baselineText);
