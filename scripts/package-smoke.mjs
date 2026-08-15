@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
@@ -48,4 +50,35 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-console.log(`${packageJson.name} package smoke passed with ${packument.files.length} packed file(s).`);
+const smokeDir = mkdtempSync(join(tmpdir(), `${packageJson.name} package smoke `));
+
+try {
+  const packOutput = execFileSync("npm", ["pack", "--pack-destination", smokeDir, "--json"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "inherit"],
+  });
+  const [packedPackage] = JSON.parse(packOutput);
+  const tarball = join(smokeDir, packedPackage.filename);
+  const installDir = join(smokeDir, "installed package");
+
+  execFileSync("npm", ["install", "--prefix", installDir, "--ignore-scripts", tarball], {
+    stdio: ["ignore", "ignore", "inherit"],
+  });
+
+  const cli =
+    process.platform === "win32"
+      ? join(installDir, "node_modules", ".bin", "cli-fp.cmd")
+      : join(installDir, "node_modules", ".bin", "cli-fp");
+  const help = execFileSync(cli, ["--help"], { encoding: "utf8" });
+  const version = execFileSync(cli, ["--version"], { encoding: "utf8" }).trim();
+
+  if (!help.includes("Record CLI contracts") || version !== packageJson.version) {
+    throw new Error("installed CLI returned unexpected help or version output");
+  }
+} finally {
+  rmSync(smokeDir, { recursive: true, force: true });
+}
+
+console.log(
+  `${packageJson.name} package smoke passed with ${packument.files.length} packed file(s) and an installed CLI check.`,
+);
