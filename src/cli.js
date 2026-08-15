@@ -3,6 +3,7 @@
 import { Command } from "commander";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { loadConfig } from "./fingerprint/config.js";
 import { buildFingerprint } from "./fingerprint/builder.js";
 import { compareFingerprints } from "./fingerprint/comparer.js";
@@ -10,7 +11,7 @@ import { formatDiffReport, saveFingerprint, loadFingerprint } from "./fingerprin
 
 const program = new Command();
 
-const pkgFile = resolve(new URL(".", import.meta.url).pathname, "../package.json");
+const pkgFile = fileURLToPath(new URL("../package.json", import.meta.url));
 const pkg = JSON.parse(readFileSync(pkgFile, "utf-8"));
 
 program
