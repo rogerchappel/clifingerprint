@@ -2,9 +2,14 @@ import { spawn } from "node:child_process";
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_MAX_STDOUT = 4096;
 export function truncate(text, max) {
-    if (text.length <= max)
+    const encoded = Buffer.from(text, "utf8");
+    if (encoded.length <= max)
         return text;
-    return text.slice(0, max) + `\n... [truncated, ${text.length} bytes total]`;
+    let end = Math.max(0, max);
+    while (end > 0 && (encoded[end] & 0xc0) === 0x80)
+        end -= 1;
+    const prefix = encoded.subarray(0, end).toString("utf8");
+    return `${prefix}\n... [truncated, ${encoded.length} bytes total]`;
 }
 export async function runProbe(probe, toolDir) {
     const normalized = normalizeProbe(probe);
