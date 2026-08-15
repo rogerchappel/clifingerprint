@@ -13,6 +13,8 @@ format and uses semantic versioning when versioned releases are published.
 
 ### Fixed
 
+- Resolve CLI metadata from decoded file URLs so installed commands work from
+  paths containing spaces.
 - Execute arguments embedded in `tool` before per-probe arguments, and reject
   recordings whose probes fail to execute or miss their expected exit code.
 
