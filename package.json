@@ -32,6 +32,7 @@
     "smoke": "bash scripts/smoke.sh",
     "package:smoke": "node scripts/package-smoke.mjs",
     "release:check": "npm run check && npm run build && npm test && npm run smoke && npm run package:smoke",
+    "release:verify-tag": "node scripts/verify-release-tag.mjs",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
