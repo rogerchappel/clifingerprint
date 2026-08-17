@@ -1,8 +1,37 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
-import { runProbe } from "../src/fingerprint/executor.js";
+import { runProbe, truncate } from "../src/fingerprint/executor.js";
 
 describe("executor", () => {
+  it("should leave output at the exact UTF-8 byte limit unchanged", () => {
+    assert.strictEqual(truncate("Aé", 3), "Aé");
+  });
+
+  it("should truncate ASCII output at the byte limit", () => {
+    assert.strictEqual(truncate("abcd", 3), "abc\n... [truncated, 4 bytes total]");
+  });
+
+  it("should preserve complete multibyte characters within the byte limit", () => {
+    assert.strictEqual(truncate("😀😀", 4), "😀\n... [truncated, 8 bytes total]");
+    assert.strictEqual(truncate("😀😀", 5), "😀\n... [truncated, 8 bytes total]");
+  });
+
+  it("should keep captured stdout and stderr valid at a multibyte boundary", async () => {
+    const result = await runProbe({
+      name: "multibyte streams",
+      tool: process.execPath,
+      args: [
+        "-e",
+        "process.stdout.write('a'.repeat(4095) + '😀'); process.stderr.write('b'.repeat(4094) + 'éx')",
+      ],
+    });
+
+    assert.strictEqual(result.stdout, `${"a".repeat(4095)}\n... [truncated, 4099 bytes total]`);
+    assert.strictEqual(result.stderr, `${"b".repeat(4094)}é\n... [truncated, 4097 bytes total]`);
+    assert.doesNotMatch(result.stdout, /�/);
+    assert.doesNotMatch(result.stderr, /�/);
+  });
+
   it("should capture stdout of a simple command", async () => {
     const result = await runProbe({
       name: "echo test",

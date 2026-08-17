@@ -15,6 +15,8 @@ format and uses semantic versioning when versioned releases are published.
 
 - Resolve CLI metadata from decoded file URLs so installed commands work from
   paths containing spaces.
+- Truncate captured stdout and stderr at complete UTF-8 character boundaries
+  and report their actual byte counts.
 - Execute arguments embedded in `tool` before per-probe arguments, and reject
   recordings whose probes fail to execute or miss their expected exit code.
 
