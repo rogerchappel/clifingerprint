@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -32,5 +33,19 @@ describe("release tag contract", () => {
     const result = verify(undefined);
     assert.equal(result.status, 1);
     assert.match(result.stderr, /GITHUB_REF_NAME is not set/);
+  });
+
+  it("runs tag verification before artifact creation", () => {
+    const workflow = readFileSync(
+      new URL("../.github/workflows/release.yml", import.meta.url),
+      "utf8",
+    );
+    const verifyIndex = workflow.indexOf("npm run release:verify-tag");
+    const packIndex = workflow.indexOf("npm pack");
+    const releaseIndex = workflow.indexOf("gh release create");
+
+    assert.ok(verifyIndex >= 0, "release workflow must invoke the tag verifier");
+    assert.ok(verifyIndex < packIndex, "tag verifier must run before npm pack");
+    assert.ok(verifyIndex < releaseIndex, "tag verifier must run before release creation");
   });
 });
