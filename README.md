@@ -142,3 +142,9 @@ npm run smoke
 npm run package:smoke
 npm run release:check
 ```
+
+Maintainer releases are created by pushing a tag that exactly matches the
+version in `package.json`, prefixed with `v` (for example, package version
+`0.1.0` requires tag `v0.1.0`). The tag workflow runs
+`npm run release:verify-tag` before `npm pack` or GitHub release creation and
+stops without creating artifacts when the tag is missing or mismatched.
