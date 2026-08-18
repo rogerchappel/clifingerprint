@@ -80,6 +80,19 @@ Set `skip: true` to retain a probe in the contract without executing it;
 configured. A probe that exceeds `timeoutMs` is never saved as a baseline by
 the `record` command.
 
+Relative command paths and arguments are evaluated from the directory that
+contains the JSON or YAML config. A relative `cwd` is resolved from that same
+directory, then becomes the working directory for the probe; relative command
+arguments are therefore evaluated from the resolved `cwd`. `packageFile` is
+also config-relative. Pass `--tool-dir <dir>` to make that directory the base
+for probe paths, relative `cwd` values, and `packageFile` instead. Absolute
+paths are used unchanged. This means an absolute config path can be recorded
+reliably from any working directory:
+
+```sh
+cli-fp record /path/to/project/clifingerprint.yaml --output fingerprint.json
+```
+
 ## Verify
 
 ```sh
