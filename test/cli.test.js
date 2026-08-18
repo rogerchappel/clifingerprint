@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import { execSync, spawnSync } from "node:child_process";
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -27,6 +27,7 @@ describe("clifingerprint CLI", () => {
     const dir = mkdtempSync(join(tmpdir(), "clifingerprint-"));
     const configPath = join(dir, "probes.json");
     const outputPath = join(dir, "fingerprint.json");
+    copyFileSync("test/fixtures/stable-cli.js", join(dir, "stable-cli.js"));
     writeFileSync(
       configPath,
       JSON.stringify({
@@ -34,7 +35,7 @@ describe("clifingerprint CLI", () => {
         probes: [
           {
             name: "version",
-            args: ["test/fixtures/stable-cli.js", "--version"],
+            args: ["stable-cli.js", "--version"],
             expectedExitCode: 0,
           },
         ],
