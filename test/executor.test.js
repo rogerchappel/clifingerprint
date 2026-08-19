@@ -1,5 +1,8 @@
 import { describe, it } from "node:test";
 import { strict as assert } from "node:assert";
+import { access, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { runProbe, truncate } from "../src/fingerprint/executor.js";
 
 describe("executor", () => {
@@ -93,6 +96,26 @@ describe("executor", () => {
     assert.strictEqual(result.timedOut, true);
     assert.strictEqual(result.exitCode, null);
     assert.strictEqual(result.expectedExitMatched, null);
+  });
+
+  it("should terminate descendants before a timed-out probe settles", async () => {
+    const directory = await mkdtemp(join(tmpdir(), "clifingerprint-timeout-"));
+    const marker = join(directory, "descendant-ran");
+    const descendant = `setTimeout(() => require("node:fs").writeFileSync(${JSON.stringify(marker)}, "ran"), 500)`;
+    const parent = `require("node:child_process").spawn(process.execPath, ["-e", ${JSON.stringify(descendant)}], { stdio: "ignore" }); setTimeout(() => {}, 30000)`;
+    try {
+      const result = await runProbe({
+        name: "process tree timeout",
+        tool: process.execPath,
+        args: ["-e", parent],
+        timeoutMs: 100,
+      });
+      assert.strictEqual(result.timedOut, true);
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      await assert.rejects(access(marker), { code: "ENOENT" });
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
   });
 
   it("should not evaluate expected exit codes for skipped probes", async () => {
