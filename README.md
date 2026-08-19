@@ -72,6 +72,10 @@ Global defaults and individual probes accept `args` as an array of strings,
 `cwd` and `stdin` as strings, and `skip` as a boolean. Each probe can override
 those defaults as well as `tool`, `command`, `env`, `envAllowlist`,
 `expectedExitCode`, and `timeoutMs`.
+When a probe times out, `clifingerprint` terminates its complete process tree
+before returning the result. POSIX systems use an isolated process group;
+Windows uses the built-in `taskkill /t /f` command. If process-tree termination
+is denied, cleanup may be limited to the direct probe process.
 The global `tool` and every probe `name` must be nonblank. Probe names must also
 be unique because they identify probes during comparison. When supplied, a
 probe-level `tool` or `command` must be nonblank too.
