@@ -44,10 +44,11 @@ export async function runProbe(probe, toolDir) {
         let stdout = "";
         let stderr = "";
         let execError = null;
-        const child = spawn(tool, args, { cwd, env, timeout });
+        let termination = null;
+        const child = spawn(tool, args, { cwd, env, detached: process.platform !== "win32" });
         const timer = setTimeout(() => {
             timedOut = true;
-            child.kill("SIGKILL");
+            termination = terminateProcessTree(child);
         }, timeout);
         if (probe.stdin && child.stdin) {
             child.stdin.write(probe.stdin);
@@ -63,8 +64,10 @@ export async function runProbe(probe, toolDir) {
                 stderr += chunk.toString();
             });
         }
-        child.on("error", (err) => {
+        child.on("error", async (err) => {
             clearTimeout(timer);
+            if (termination)
+                await termination;
             execError = err.message;
             resolve({
                 name: probe.name,
@@ -80,8 +83,10 @@ export async function runProbe(probe, toolDir) {
                 skipped: false,
             });
         });
-        child.on("close", (code) => {
+        child.on("close", async (code) => {
             clearTimeout(timer);
+            if (termination)
+                await termination;
             resolve({
                 name: probe.name,
                 command: buildCommand(normalized),
@@ -96,6 +101,28 @@ export async function runProbe(probe, toolDir) {
                 skipped: false,
             });
         });
+    });
+}
+async function terminateProcessTree(child) {
+    if (child.pid === undefined)
+        return;
+    if (process.platform !== "win32") {
+        try {
+            process.kill(-child.pid, "SIGKILL");
+        }
+        catch (err) {
+            if (err?.code !== "ESRCH")
+                child.kill("SIGKILL");
+        }
+        return;
+    }
+    await new Promise((resolve) => {
+        const killer = spawn("taskkill", ["/pid", String(child.pid), "/t", "/f"], { stdio: "ignore" });
+        killer.once("error", () => {
+            child.kill("SIGKILL");
+            resolve();
+        });
+        killer.once("close", resolve);
     });
 }
 export function normalizeProbe(probe) {
