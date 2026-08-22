@@ -16,6 +16,15 @@ function verify(refName) {
 }
 
 describe("release tag contract", () => {
+  it("tests the declared minimum Node runtime in CI", () => {
+    const workflow = readFileSync(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8");
+    const minimum = packageJson.engines.node.match(/^>=(\d+\.\d+\.\d+)$/)?.[1];
+
+    assert.ok(minimum, "engines.node must declare one exact minimum version");
+    assert.ok(workflow.includes(`node-version: [${minimum},`));
+    assert.match(workflow, /npm run package:smoke/);
+  });
+
   it("accepts the exact v-prefixed package version", () => {
     const result = verify(expectedTag);
     assert.equal(result.status, 0);
