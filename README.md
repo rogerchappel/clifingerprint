@@ -131,7 +131,9 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting guidance.
 
 ## Development
 
-Use Node.js 20 or newer. Run the same checks locally before opening a PR:
+Use Node.js 20.19 or newer. CI runs the full release check on Node 20.19, the
+minimum declared in `package.json`, and on Node 22. Run the same checks locally
+before opening a PR:
 
 ```sh
 npm run build

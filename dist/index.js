@@ -1,2 +1,2 @@
-export * from "./index.js";
+export * from "./fingerprint/index.js";
 //# sourceMappingURL=index.js.map

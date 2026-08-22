@@ -2,6 +2,7 @@
 
 ### Highlights
 
+- Compatibility: Require Node.js 20.19+ and verify the minimum runtime in CI with installed package CLI/API smoke coverage.
 - Fixes: Update package.json for pure ESM JS, remove TypeScript deps.
 - Maintenance: Add smoke script to package.json for releasebox compliance.
 - Features: Export public API from src/index.js.
@@ -34,4 +35,3 @@
 ### Contributors
 
 - Roger Chappel
-
