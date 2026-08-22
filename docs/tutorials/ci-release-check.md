@@ -6,7 +6,7 @@ check so that every pull request fails when the CLI contract changes.
 ## Prerequisites
 
 - A CLI tool with `--help` / `--version` / subcommands
-- Node.js 18+
+- Node.js 20.19+
 - `clifingerprint` installed or run from source
 
 ## Step 1 — Create a probe config
