@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const packageJson = JSON.parse(readFileSync("package.json", "utf8"));
 const output = execFileSync("npm", ["pack", "--dry-run", "--json"], {
@@ -32,9 +33,7 @@ if (packageJson.main) {
 }
 
 const binEntries =
-  typeof packageJson.bin === "string"
-    ? [packageJson.bin]
-    : Object.values(packageJson.bin ?? {});
+  typeof packageJson.bin === "string" ? [packageJson.bin] : Object.values(packageJson.bin ?? {});
 
 for (const binEntry of binEntries) {
   requiredFiles.add(binEntry.replace(/^\.\//, ""));
@@ -72,6 +71,16 @@ try {
   const help = execFileSync(cli, ["--help"], { encoding: "utf8" });
   const version = execFileSync(cli, ["--version"], { encoding: "utf8" }).trim();
 
+  execFileSync(
+    process.execPath,
+    [
+      "--input-type=module",
+      "--eval",
+      `import('${pathToFileURL(join(installDir, "node_modules", packageJson.name, "src", "index.js"))}').then((api) => { if (typeof api.buildFingerprint !== 'function') process.exit(1) })`,
+    ],
+    { cwd: installDir, stdio: ["ignore", "ignore", "inherit"] },
+  );
+
   if (!help.includes("Record CLI contracts") || version !== packageJson.version) {
     throw new Error("installed CLI returned unexpected help or version output");
   }
@@ -80,5 +89,5 @@ try {
 }
 
 console.log(
-  `${packageJson.name} package smoke passed with ${packument.files.length} packed file(s) and an installed CLI check.`,
+  `${packageJson.name} package smoke passed with ${packument.files.length} packed file(s) and installed CLI/API checks.`,
 );
