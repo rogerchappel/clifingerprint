@@ -40,7 +40,10 @@ node src/cli.js compare fingerprint.json clifingerprint.yaml
 ```
 
 `compare` runs the probes again and exits with code `1` when the current
-contract differs from the baseline.
+contract differs from the baseline. A fresh execution error, timeout, or
+`expectedExitCode` mismatch also fails comparison even when the saved baseline
+contains the same failure state, preventing broken probes from being reported
+as compatible.
 
 ## Show A Summary
 

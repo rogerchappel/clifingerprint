@@ -61,3 +61,6 @@ Without `clifingerprint`, a CLI can quietly change:
 - error message format
 
 This check turns those drift issues into immediate CI failures.
+Fresh probe execution errors, timeouts, and expected-exit mismatches also fail
+the comparison. Matching a previously recorded failure state cannot produce a
+false compatibility success.
