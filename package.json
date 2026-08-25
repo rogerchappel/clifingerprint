@@ -54,8 +54,10 @@
     "url": "https://github.com/rogerchappel/clifingerprint/issues"
   },
   "homepage": "https://github.com/rogerchappel/clifingerprint#readme",
+  "packageManager": "npm@10.9.4",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=20.19.0",
+    "npm": ">=10 <11"
   },
   "dependencies": {
     "commander": "^12.1.0",
