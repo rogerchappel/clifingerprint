@@ -95,6 +95,106 @@ describe("clifingerprint CLI", () => {
     assert.doesNotMatch(result.stdout, /Fingerprint saved/);
     assert.strictEqual(result.outputExists, false);
   });
+
+  it("should fail compare when matching fingerprints contain execution errors", () => {
+    const result = compareConfig(
+      {
+        tool: "missing-clifingerprint-command",
+        probes: [{ name: "missing", expectedExitCode: 0, timeoutMs: 100 }],
+      },
+      {
+        name: "missing",
+        command: "missing-clifingerprint-command",
+        stdout: "",
+        stderr: "",
+        exitCode: null,
+        expectedExitCode: 0,
+        expectedExitMatched: false,
+        timedOut: false,
+        execError: "spawn missing-clifingerprint-command ENOENT",
+        skipped: false,
+      },
+    );
+
+    assert.strictEqual(result.status, 1);
+    assert.match(result.stderr, /Comparison failed:\n- missing: execution failed/);
+    assert.doesNotMatch(result.stdout, /All probes match/);
+  });
+
+  it("should fail compare when matching fingerprints contain timeouts", () => {
+    const result = compareConfig(
+      {
+        tool: process.execPath,
+        probes: [{ name: "slow probe", args: ["-e", "setInterval(() => {}, 1000)"], timeoutMs: 25 }],
+      },
+      {
+        name: "slow probe",
+        command: `${process.execPath} -e "setInterval(() => {}, 1000)"`,
+        stdout: "",
+        stderr: "",
+        exitCode: null,
+        expectedExitCode: null,
+        expectedExitMatched: null,
+        timedOut: true,
+        execError: null,
+        skipped: false,
+      },
+    );
+
+    assert.strictEqual(result.status, 1);
+    assert.match(result.stderr, /Comparison failed:\n- slow probe: timed out/);
+    assert.doesNotMatch(result.stdout, /All probes match/);
+  });
+
+  it("should fail compare when matching fingerprints miss expected exits", () => {
+    const result = compareConfig(
+      {
+        tool: "node test/fixtures/stable-cli.js",
+        probes: [{ name: "unexpected exit", args: ["fail"], expectedExitCode: 0 }],
+      },
+      {
+        name: "unexpected exit",
+        command: "node test/fixtures/stable-cli.js fail",
+        stdout: "",
+        stderr: "intentional failure\n",
+        exitCode: 1,
+        expectedExitCode: 0,
+        expectedExitMatched: false,
+        timedOut: false,
+        execError: null,
+        skipped: false,
+      },
+    );
+
+    assert.strictEqual(result.status, 1);
+    assert.match(result.stderr, /unexpected exit: expected exit 0, received 1/);
+    assert.doesNotMatch(result.stdout, /All probes match/);
+  });
+
+  it("should report a normal matching comparison", () => {
+    const result = compareConfig(
+      {
+        tool: "node test/fixtures/stable-cli.js",
+        probes: [{ name: "version", args: ["--version"], expectedExitCode: 0 }],
+      },
+      {
+        name: "version",
+        command: "node test/fixtures/stable-cli.js --version",
+        stdout: "1.0.0\n",
+        stderr: "",
+        exitCode: 0,
+        expectedExitCode: 0,
+        expectedExitMatched: true,
+        timedOut: false,
+        execError: null,
+        skipped: false,
+      },
+    );
+
+    assert.strictEqual(result.status, 0);
+    assert.match(result.stdout, /All probes match/);
+    assert.strictEqual(result.stderr, "");
+  });
 });
 
 function recordConfig(config) {
@@ -111,4 +211,26 @@ function recordConfig(config) {
     },
   );
   return { ...result, outputExists: existsSync(outputPath) };
+}
+
+function compareConfig(config, baselineProbe) {
+  const dir = mkdtempSync(join(tmpdir(), "clifingerprint-compare-"));
+  const configPath = join(dir, "probes.json");
+  const baselinePath = join(dir, "fingerprint.json");
+  writeFileSync(configPath, JSON.stringify(config));
+  writeFileSync(
+    baselinePath,
+    JSON.stringify({
+      version: 1,
+      tool: config.tool,
+      metadata: {},
+      package: null,
+      timestamp: "2026-01-01T00:00:00.000Z",
+      probes: [baselineProbe],
+    }),
+  );
+
+  return spawnSync(process.execPath, ["src/cli.js", "compare", baselinePath, configPath], {
+    encoding: "utf8",
+  });
 }
