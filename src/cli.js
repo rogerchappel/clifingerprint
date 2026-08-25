@@ -8,6 +8,7 @@ import { loadConfig } from "./fingerprint/config.js";
 import { buildFingerprint } from "./fingerprint/builder.js";
 import { compareFingerprints } from "./fingerprint/comparer.js";
 import { formatDiffReport, saveFingerprint, loadFingerprint } from "./fingerprint/serializer.js";
+import { collectProbeFailures, formatProbeFailures } from "./fingerprint/validation.js";
 
 const program = new Command();
 
@@ -29,24 +30,9 @@ program
   .action(async (configPath, opts) => {
     const cfg = loadConfig(resolve(configPath));
     const fp = await buildFingerprint(cfg, opts.toolDir);
-    const failures = fp.probes.flatMap((probe) => {
-      if (probe.execError) {
-        return [`${probe.name}: execution failed: ${probe.execError}`];
-      }
-      if (probe.timedOut) {
-        return [`${probe.name}: timed out`];
-      }
-      if (probe.expectedExitMatched === false) {
-        return [
-          `${probe.name}: expected exit ${probe.expectedExitCode}, received ${probe.exitCode}`,
-        ];
-      }
-      return [];
-    });
+    const failures = collectProbeFailures(fp);
     if (failures.length > 0) {
-      console.error(
-        `Fingerprint not saved:\n${failures.map((failure) => `- ${failure}`).join("\n")}`,
-      );
+      console.error(formatProbeFailures("Fingerprint not saved", failures));
       process.exitCode = 1;
       return;
     }
@@ -63,6 +49,12 @@ program
     const baseline = loadFingerprint(resolve(baselinePath));
     const cfg = loadConfig(resolve(configPath));
     const current = await buildFingerprint(cfg, opts.toolDir);
+    const failures = collectProbeFailures(current);
+    if (failures.length > 0) {
+      console.error(formatProbeFailures("Comparison failed", failures));
+      process.exitCode = 1;
+      return;
+    }
     const result = compareFingerprints(baseline, current);
     console.log(formatDiffReport(result));
     if (!result.matched) process.exit(1);

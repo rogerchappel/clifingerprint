@@ -125,7 +125,9 @@ describe("clifingerprint CLI", () => {
     const result = compareConfig(
       {
         tool: process.execPath,
-        probes: [{ name: "slow probe", args: ["-e", "setInterval(() => {}, 1000)"], timeoutMs: 25 }],
+        probes: [
+          { name: "slow probe", args: ["-e", "setInterval(() => {}, 1000)"], timeoutMs: 25 },
+        ],
       },
       {
         name: "slow probe",
@@ -149,12 +151,12 @@ describe("clifingerprint CLI", () => {
   it("should fail compare when matching fingerprints miss expected exits", () => {
     const result = compareConfig(
       {
-        tool: "node test/fixtures/stable-cli.js",
+        tool: `${process.execPath} ${join(process.cwd(), "test/fixtures/stable-cli.js")}`,
         probes: [{ name: "unexpected exit", args: ["fail"], expectedExitCode: 0 }],
       },
       {
         name: "unexpected exit",
-        command: "node test/fixtures/stable-cli.js fail",
+        command: `${process.execPath} ${join(process.cwd(), "test/fixtures/stable-cli.js")} fail`,
         stdout: "",
         stderr: "intentional failure\n",
         exitCode: 1,
@@ -174,12 +176,12 @@ describe("clifingerprint CLI", () => {
   it("should report a normal matching comparison", () => {
     const result = compareConfig(
       {
-        tool: "node test/fixtures/stable-cli.js",
+        tool: `${process.execPath} ${join(process.cwd(), "test/fixtures/stable-cli.js")}`,
         probes: [{ name: "version", args: ["--version"], expectedExitCode: 0 }],
       },
       {
         name: "version",
-        command: "node test/fixtures/stable-cli.js --version",
+        command: `${process.execPath} ${join(process.cwd(), "test/fixtures/stable-cli.js")} --version`,
         stdout: "1.0.0\n",
         stderr: "",
         exitCode: 0,
