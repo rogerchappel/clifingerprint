@@ -9,8 +9,12 @@ codes, stdout/stderr snippets, and package metadata.
 
 ## Install
 
+Development and release verification cover Node.js 20.19, 22, and 24 with
+npm 10. The repository pins npm 10.9.4 so clean installs use the lockfile's
+verified package-manager version:
+
 ```sh
-npm install
+npx --yes npm@10.9.4 ci
 ```
 
 Run from the repository:
