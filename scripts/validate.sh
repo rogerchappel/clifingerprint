@@ -54,6 +54,21 @@ package_script_exists() {
 }
 
 choose_package_manager() {
+  local declared_package_manager=""
+
+  if [ -f "package.json" ]; then
+    declared_package_manager="$(node -e "const fs=require('node:fs'); const pkg=JSON.parse(fs.readFileSync('package.json','utf8')); if (typeof pkg.packageManager === 'string') process.stdout.write(pkg.packageManager.split('@')[0])")"
+  fi
+
+  if [ -n "$declared_package_manager" ]; then
+    if command -v "$declared_package_manager" >/dev/null 2>&1; then
+      printf '%s\n' "$declared_package_manager"
+      return
+    fi
+
+    return 1
+  fi
+
   if [ -f "pnpm-lock.yaml" ] && command -v pnpm >/dev/null 2>&1; then
     printf 'pnpm\n'
     return
