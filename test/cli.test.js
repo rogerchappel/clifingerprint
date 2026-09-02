@@ -51,6 +51,29 @@ describe("clifingerprint CLI", () => {
     assert.strictEqual(fingerprint.probes.length, 1);
   });
 
+  it("should create parent directories for a nested output path", () => {
+    const dir = mkdtempSync(join(tmpdir(), "clifingerprint-nested-output-"));
+    const configPath = join(dir, "probes.json");
+    const outputPath = join(dir, "nested", "results", "fingerprint.json");
+    writeFileSync(
+      configPath,
+      JSON.stringify({
+        tool: process.execPath,
+        probes: [{ name: "version", args: ["--version"], expectedExitCode: 0 }],
+      }),
+    );
+
+    const result = spawnSync(
+      process.execPath,
+      ["src/cli.js", "record", configPath, "--output", outputPath],
+      { encoding: "utf8" },
+    );
+
+    assert.strictEqual(result.status, 0, result.stderr);
+    assert.match(result.stdout, /Fingerprint saved/);
+    assert.strictEqual(JSON.parse(readFileSync(outputPath, "utf8")).probes.length, 1);
+  });
+
   it("should fail record when a probe cannot be executed", () => {
     const result = recordConfig({
       tool: "missing-clifingerprint-command",
