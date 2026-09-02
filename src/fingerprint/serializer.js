@@ -1,4 +1,5 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 
 export function serializeFingerprint(fp) {
   return JSON.stringify(fp, null, 2);
@@ -18,6 +19,7 @@ export function loadFingerprint(path) {
 }
 
 export function saveFingerprint(path, fp) {
+  mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, serializeFingerprint(fp), "utf-8");
 }
 
