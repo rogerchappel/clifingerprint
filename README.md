@@ -33,10 +33,11 @@ node src/cli.js record clifingerprint.yaml --output fingerprint.json
 ```
 
 `record` executes every non-skipped probe in the config and writes a JSON
-fingerprint. Intentionally skipped probes remain in the fingerprint, and their
-expected exit code is not evaluated. It exits with code `1` without saving when
-a command cannot be executed, a probe times out, or a completed probe does not
-match its `expectedExitCode`.
+fingerprint, creating missing parent directories in the `--output` path.
+Intentionally skipped probes remain in the fingerprint, and their expected exit
+code is not evaluated. It exits with code `1` without saving when a command
+cannot be executed, a probe times out, or a completed probe does not match its
+`expectedExitCode`.
 
 ## Compare Against A Baseline
 
