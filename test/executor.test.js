@@ -86,6 +86,20 @@ describe("executor", () => {
     assert.ok(result.stdout.includes("hello from stdin"));
   });
 
+  it("should close stdin when an empty string is explicitly supplied", async () => {
+    const result = await runProbe({
+      name: "empty stdin",
+      tool: process.execPath,
+      args: ["-e", "process.stdin.once('end', () => console.log('EOF')); process.stdin.resume()"],
+      stdin: "",
+      timeoutMs: 1000,
+    });
+
+    assert.strictEqual(result.timedOut, false);
+    assert.strictEqual(result.exitCode, 0);
+    assert.strictEqual(result.stdout.trim(), "EOF");
+  });
+
   it("should respect timeout", async () => {
     const result = await runProbe({
       name: "timeout",
