@@ -13,6 +13,8 @@ format and uses semantic versioning when versioned releases are published.
 
 ### Fixed
 
+- Close explicitly configured empty stdin streams so EOF-waiting probes can
+  complete and be recorded.
 - Resolve CLI metadata from decoded file URLs so installed commands work from
   paths containing spaces.
 - Truncate captured stdout and stderr at complete UTF-8 character boundaries

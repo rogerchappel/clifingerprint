@@ -61,7 +61,7 @@ export async function runProbe(probe, toolDir) {
       termination = terminateProcessTree(child);
     }, timeout);
 
-    if (probe.stdin && child.stdin) {
+    if (probe.stdin !== undefined && child.stdin) {
       child.stdin.write(probe.stdin);
       child.stdin.end();
     }

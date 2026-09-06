@@ -119,6 +119,30 @@ describe("clifingerprint CLI", () => {
     assert.strictEqual(result.outputExists, false);
   });
 
+  it("should record a probe that receives an explicitly empty stdin stream", () => {
+    const result = recordConfig({
+      tool: process.execPath,
+      probes: [
+        {
+          name: "empty stdin EOF",
+          args: [
+            "-e",
+            "process.stdin.once('end', () => console.log('EOF')); process.stdin.resume()",
+          ],
+          stdin: "",
+          timeoutMs: 1000,
+          expectedExitCode: 0,
+        },
+      ],
+    });
+
+    assert.strictEqual(result.status, 0, result.stderr);
+    assert.match(result.stdout, /Fingerprint saved/);
+    assert.strictEqual(result.outputExists, true);
+    assert.strictEqual(result.fingerprint.probes[0].stdout.trim(), "EOF");
+    assert.strictEqual(result.fingerprint.probes[0].timedOut, false);
+  });
+
   it("should fail compare when matching fingerprints contain execution errors", () => {
     const result = compareConfig(
       {
@@ -235,7 +259,12 @@ function recordConfig(config) {
       encoding: "utf8",
     },
   );
-  return { ...result, outputExists: existsSync(outputPath) };
+  const outputExists = existsSync(outputPath);
+  return {
+    ...result,
+    outputExists,
+    fingerprint: outputExists ? JSON.parse(readFileSync(outputPath, "utf8")) : null,
+  };
 }
 
 function compareConfig(config, baselineProbe) {
