@@ -81,6 +81,9 @@ Global defaults and individual probes accept `args` as an array of strings,
 `cwd` and `stdin` as strings, and `skip` as a boolean. Each probe can override
 those defaults as well as `tool`, `command`, `env`, `envAllowlist`,
 `expectedExitCode`, and `timeoutMs`.
+Supplying `stdin: ""` explicitly closes the probe's standard input without
+writing data, allowing commands that wait for EOF to complete. Omitting
+`stdin` leaves the stream open for the probe's normal lifetime.
 When a probe times out, `clifingerprint` terminates its complete process tree
 before returning the result. POSIX systems use an isolated process group;
 Windows uses the built-in `taskkill /t /f` command. If process-tree termination
