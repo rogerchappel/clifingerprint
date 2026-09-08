@@ -23,6 +23,47 @@ describe("clifingerprint CLI", () => {
     }
   });
 
+  it("should distinguish successful, skipped, and failed probes in show output", () => {
+    const dir = mkdtempSync(join(tmpdir(), "clifingerprint-show-"));
+    const fingerprintPath = join(dir, "fingerprint.json");
+    writeFileSync(
+      fingerprintPath,
+      JSON.stringify({
+        version: 1,
+        tool: "example-cli",
+        timestamp: "2026-09-08T00:00:00.000Z",
+        probes: [
+          probeResult("ordinary success", { exitCode: 0 }),
+          probeResult("expected nonzero", {
+            exitCode: 2,
+            expectedExitCode: 2,
+            expectedExitMatched: true,
+          }),
+          probeResult("intentional skip", { exitCode: null, skipped: true }),
+          probeResult("exit mismatch", {
+            exitCode: 1,
+            expectedExitCode: 0,
+            expectedExitMatched: false,
+          }),
+          probeResult("slow command", { exitCode: null, timedOut: true }),
+          probeResult("missing command", { exitCode: null, execError: "spawn ENOENT" }),
+        ],
+      }),
+    );
+
+    const result = spawnSync(process.execPath, ["src/cli.js", "show", fingerprintPath], {
+      encoding: "utf8",
+    });
+
+    assert.strictEqual(result.status, 0, result.stderr);
+    assert.match(result.stdout, /✓ ordinary success {2}exit=0 {2}5ms/);
+    assert.match(result.stdout, /✓ expected nonzero {2}exit=2 {2}5ms/);
+    assert.match(result.stdout, /○ intentional skip {2}skipped/);
+    assert.match(result.stdout, /✗ exit mismatch {2}exit=1 \(expected 0\) {2}5ms/);
+    assert.match(result.stdout, /✗ slow command {2}timed out {2}5ms/);
+    assert.match(result.stdout, /✗ missing command {2}execution error {2}5ms/);
+  });
+
   it("should record a fingerprint from a config", () => {
     const dir = mkdtempSync(join(tmpdir(), "clifingerprint-"));
     const configPath = join(dir, "probes.json");
@@ -264,6 +305,23 @@ function recordConfig(config) {
     ...result,
     outputExists,
     fingerprint: outputExists ? JSON.parse(readFileSync(outputPath, "utf8")) : null,
+  };
+}
+
+function probeResult(name, overrides = {}) {
+  return {
+    name,
+    command: name,
+    stdout: "",
+    stderr: "",
+    exitCode: 0,
+    expectedExitCode: null,
+    expectedExitMatched: null,
+    timedOut: false,
+    execError: null,
+    durationMs: 5,
+    skipped: false,
+    ...overrides,
   };
 }
 
