@@ -69,9 +69,21 @@ program
     console.log(`Recorded: ${fp.timestamp}`);
     console.log(`Probes: ${fp.probes.length}\n`);
     for (const p of fp.probes) {
-      const icon = p.exitCode === 0 ? "✓" : "✗";
-      console.log(`  ${icon} ${p.name}  exit=${p.exitCode}  ${p.durationMs}ms`);
+      const status = formatProbeStatus(p);
+      console.log(`  ${status.icon} ${p.name}  ${status.detail}  ${p.durationMs}ms`);
     }
   });
+
+function formatProbeStatus(probe) {
+  if (probe.skipped) return { icon: "○", detail: "skipped" };
+  if (probe.execError) return { icon: "✗", detail: "execution error" };
+  if (probe.timedOut) return { icon: "✗", detail: "timed out" };
+  if (probe.expectedExitMatched === false) {
+    return { icon: "✗", detail: `exit=${probe.exitCode} (expected ${probe.expectedExitCode})` };
+  }
+
+  const succeeded = probe.expectedExitMatched === true || probe.exitCode === 0;
+  return { icon: succeeded ? "✓" : "✗", detail: `exit=${probe.exitCode}` };
+}
 
 program.parse(process.argv);
