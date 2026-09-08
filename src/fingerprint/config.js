@@ -28,6 +28,15 @@ export function validateConfig(config) {
   if (config.skip !== undefined && typeof config.skip !== "boolean") {
     throw new Error("config.skip must be a boolean when provided");
   }
+  if (config.expectedExitCode !== undefined && !Number.isInteger(config.expectedExitCode)) {
+    throw new Error("config.expectedExitCode must be an integer when provided");
+  }
+  if (
+    config.timeoutMs !== undefined &&
+    (!Number.isInteger(config.timeoutMs) || config.timeoutMs <= 0)
+  ) {
+    throw new Error("config.timeoutMs must be a positive integer when provided");
+  }
   if (config.env !== undefined && !isStringRecord(config.env)) {
     throw new Error("config.env must be an object of string values when provided");
   }
