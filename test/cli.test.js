@@ -160,6 +160,25 @@ describe("clifingerprint CLI", () => {
     assert.strictEqual(result.outputExists, false);
   });
 
+  it("should apply global expected exits and timeouts while recording", () => {
+    const expectedExit = recordConfig({
+      tool: process.execPath,
+      expectedExitCode: 3,
+      probes: [{ name: "expected exit", args: ["-e", "process.exit(3)"] }],
+    });
+    const timeout = recordConfig({
+      tool: process.execPath,
+      timeoutMs: 10,
+      probes: [{ name: "slow probe", args: ["-e", "setTimeout(() => {}, 250)"] }],
+    });
+
+    assert.strictEqual(expectedExit.status, 0, expectedExit.stderr);
+    assert.strictEqual(expectedExit.fingerprint.probes[0].expectedExitMatched, true);
+    assert.strictEqual(timeout.status, 1);
+    assert.match(timeout.stderr, /slow probe: timed out/);
+    assert.strictEqual(timeout.outputExists, false);
+  });
+
   it("should record a probe that receives an explicitly empty stdin stream", () => {
     const result = recordConfig({
       tool: process.execPath,
