@@ -82,6 +82,8 @@ describe("config validation", () => {
         cwd: "/tmp",
         stdin: "global input",
         skip: false,
+        expectedExitCode: 3,
+        timeoutMs: 10,
         probes: [
           {
             name: "override",
@@ -115,6 +117,16 @@ describe("config validation", () => {
       label: "non-boolean global skip",
       config: { skip: "yes" },
       message: /config\.skip must be a boolean/,
+    },
+    {
+      label: "non-integer global expectedExitCode",
+      config: { expectedExitCode: 1.5 },
+      message: /config\.expectedExitCode must be an integer/,
+    },
+    {
+      label: "non-positive global timeoutMs",
+      config: { timeoutMs: 0 },
+      message: /config\.timeoutMs must be a positive integer/,
     },
     {
       label: "non-string probe args elements",

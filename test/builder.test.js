@@ -58,6 +58,31 @@ describe("builder", () => {
     assert.strictEqual(fp.probes[0].exitCode, null);
   });
 
+  it("should inherit global execution expectations with probe overrides", async () => {
+    const fp = await buildFingerprint({
+      tool: process.execPath,
+      expectedExitCode: 3,
+      timeoutMs: 25,
+      probes: [
+        { name: "expected exit", args: ["-e", "process.exit(3)"] },
+        { name: "timeout", args: ["-e", "setInterval(() => {}, 1000)"] },
+        {
+          name: "override",
+          args: ["-e", "setTimeout(() => process.exit(0), 50)"],
+          expectedExitCode: 0,
+          timeoutMs: 500,
+        },
+      ],
+    });
+
+    assert.strictEqual(fp.probes[0].expectedExitCode, 3);
+    assert.strictEqual(fp.probes[0].expectedExitMatched, true);
+    assert.strictEqual(fp.probes[1].timedOut, true);
+    assert.strictEqual(fp.probes[2].timedOut, false);
+    assert.strictEqual(fp.probes[2].expectedExitCode, 0);
+    assert.strictEqual(fp.probes[2].expectedExitMatched, true);
+  });
+
   it("should run multiple probes sequentially", async () => {
     const config = {
       tool: "echo",
