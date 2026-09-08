@@ -57,6 +57,12 @@ as compatible.
 node src/cli.js show fingerprint.json
 ```
 
+Each probe is marked `✓` when it completed successfully, including an expected
+nonzero exit, `○` when it was intentionally skipped, or `✗` for an
+expected-exit mismatch, timeout, execution error, or unexpected nonzero exit.
+The summary names timeout and execution-error states and shows both actual and
+expected codes for an exit mismatch.
+
 ## Config
 
 Configs may be JSON or YAML:
