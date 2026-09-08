@@ -74,6 +74,8 @@ metadata:
   owner: cli-team
 envAllowlist:
   - PATH
+expectedExitCode: 0
+timeoutMs: 5000
 probes:
   - name: help
     args: ["--help"]
@@ -84,9 +86,9 @@ probes:
 ```
 
 Global defaults and individual probes accept `args` as an array of strings,
-`cwd` and `stdin` as strings, and `skip` as a boolean. Each probe can override
-those defaults as well as `tool`, `command`, `env`, `envAllowlist`,
-`expectedExitCode`, and `timeoutMs`.
+`cwd` and `stdin` as strings, `skip` as a boolean, `expectedExitCode` as an
+integer, and `timeoutMs` as a positive integer. Each probe can override those
+defaults as well as `tool`, `command`, `env`, and `envAllowlist`.
 Supplying `stdin: ""` explicitly closes the probe's standard input without
 writing data, allowing commands that wait for EOF to complete. Omitting
 `stdin` leaves the stream open for the probe's normal lifetime.

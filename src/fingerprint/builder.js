@@ -17,6 +17,8 @@ export async function buildFingerprint(config, toolDir) {
         stdin: probe.stdin ?? config.stdin,
         skip: probe.skip ?? config.skip,
         envAllowlist: probe.envAllowlist ?? config.envAllowlist,
+        expectedExitCode: probe.expectedExitCode ?? config.expectedExitCode,
+        timeoutMs: probe.timeoutMs ?? config.timeoutMs,
         env: { ...(config.env ?? {}), ...(probe.env ?? {}) },
       },
       baseDir,
