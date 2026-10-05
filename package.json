@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node --test",
+    "test": "node --test test/*.test.js",
     "lint": "eslint src/ test/ --ext .js",
     "format": "prettier --write src/ test/",
     "check": "npm run lint && npx prettier --check 'src/**/*.js' 'test/**/*.js'",
